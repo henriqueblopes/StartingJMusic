@@ -27,8 +27,8 @@ public class Individual {
 	
 	public Individual(Track track) {
 		r = new Random();
-		//r.setSeed(0);
-		r.setSeed(System.currentTimeMillis());
+		r.setSeed(0);
+		//r.setSeed(System.currentTimeMillis());
 		this.musicLengthBars = track.getBarNumber();
 		this.setTrack(track);;
 		fitness = 0;

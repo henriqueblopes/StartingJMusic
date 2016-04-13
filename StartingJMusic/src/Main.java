@@ -30,18 +30,17 @@ public final class Main implements JMC {
 		Fitness.fitness(i1, Constants.ZIPF_FITNESS);
 		i1.getTrack().setName("exibicaoaleatoria.mid");*/
 		/*i1.getTrack().trackToMidi();*/
+		long time = System.currentTimeMillis();
+		for (int i = 0; i< 10000; i++) {
+			Individual i1 = new Individual(40);
+			i1.createTrack();
+			Fitness.fitness(i1, Constants.ZIPF_FITNESS);
+		}
+		System.out.println("Tempo de 10000 avaliações: " + (System.currentTimeMillis() - time));
 		
-		Score tmp = new Score("tmp.mid");
-		//Read.midi(tmp, "midis/megadeth-TornadoOfSouls-Solo.mid");
-		Read.midi(tmp, "TrechosMidis/bethoven-quintasinfonia1.mid");
-		//Read.midi(tmp, "TrechosMidis/JohnsonEric-CliffsofDover.mid");
-		Track t = new Track(tmp.getPart(0).getPhrase(0), "Track1");
-		Individual i1 = new Individual(t);
-		Fitness.fitness(i1, Constants.ZIPF_FITNESS);
-		System.out.println("Fitness: " + i1.getFitness()) ;
-		printCoefFitness(i1);
 		
-		runGenetic();		
+		//evalInputMusic();
+		//runGenetic();		
 	}
 	
 	public static void printMusic(Individual i1) {
@@ -114,6 +113,18 @@ public final class Main implements JMC {
 		max.getTrack().trackToMidi();
 		Fitness.euclidianDistanceZipf(max.getTrack());
 		printCoefFitness(max);
+	}
+	
+	public static void evalInputMusic () {
+		Score tmp = new Score("tmp.mid");
+		//Read.midi(tmp, "midis/megadeth-TornadoOfSouls-Solo.mid");
+		Read.midi(tmp, "TrechosMidis/bethoven-quintasinfonia1.mid");
+		//Read.midi(tmp, "TrechosMidis/JohnsonEric-CliffsofDover.mid");
+		Track t = new Track(tmp.getPart(0).getPhrase(0), "Track1");
+		Individual i1 = new Individual(t);
+		Fitness.fitness(i1, Constants.ZIPF_FITNESS);
+		System.out.println("Fitness: " + i1.getFitness()) ;
+		printCoefFitness(i1);
 	}
 	
 }
