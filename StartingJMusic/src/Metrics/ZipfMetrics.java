@@ -22,10 +22,20 @@ import NoteEnconding.Track;
 
 public abstract class ZipfMetrics {
 	
-	public static double pitchMetricCalculator(Track tr) {
-		return pitchMetricCalculator(tr, 128);
-	}
+	private ArrayList<NoteHerremans> pitchDistances;
+	private ArrayList<NoteHerremans> chromaticPitchs;
+	private ArrayList<NoteHerremans> melodicIntervals;
+	private ArrayList<NoteHerremans> rhythms;
+	private ArrayList<NoteHerremans> rhythmIntervals;
 	
+	public void convertAll (Track tr) {
+		//this.pitchDistances;
+		this.chromaticPitchs = convertMod12Pitch(tr.getNoteSequence());
+		this.melodicIntervals = convertMelodicInterval(tr.getNoteSequence());
+		this.rhythmIntervals = convertRhythm(tr.getNoteSequence());
+		this.rhythmIntervals = convertRhythmInterval(tr.getNoteSequence());
+	}
+		
 	public static double fractalMetricCalculator(Track tr, int noteMin, String zipfLaw) {
 		double a = pitchMetricCalculator(tr, 128);
 		HashMap<Integer, ArrayList<Double>> angMap = new HashMap<Integer, ArrayList<Double>>();
@@ -92,12 +102,20 @@ public abstract class ZipfMetrics {
 		
 		
 	}
-	public static double chromaticPitchMetricCalculator(Track tr) {
-		Track t = new Track("aux");
-		t.setNoteSequence(Fitness.copyNoteSequence(tr).getNoteSequence());
-		ArrayList<NoteHerremans> nh = convertMod12Pitch(t.getNoteSequence()); 
-		t.setNoteSequence(nh);
-		return pitchMetricCalculator(t, 12);
+	
+	public static double pitchMetricCalculator(Track tr) {
+		return pitchMetricCalculator(tr, 128);
+	}
+	
+	//teste pendente
+	public static double pitchDistanceMetricCalculator (Track tr) {
+		ArrayList<NoteForCount> nfcs = convertPitchDistance(tr);
+		int cP[] = new int[nfcs.size()];
+		for (NoteForCount nfc: nfcs) {
+			cP[nfcs.indexOf(nfc)] = nfc.getCount();
+		}
+		Arrays.sort(cP);
+		return calculateLinearRegression(cP);
 	}
 	
 	//seria bom fazer mais alguns testes (fixar semente e fazer resultado na mão)
@@ -107,6 +125,15 @@ public abstract class ZipfMetrics {
 		int cP[] = countPitchDurationFrequency(t.getNoteSequence());
 		return calculateLinearRegression(cP);
 	}
+	
+	//se pitchDistanceMetric funciona, este tb funciona.
+	public static double chromaticPitchDistanceMetricCalculator (Track tr) {
+		Track t = new Track("aux");
+		t.setNoteSequence(Fitness.copyNoteSequence(tr).getNoteSequence());
+		ArrayList<NoteHerremans> nh = convertMod12Pitch(t.getNoteSequence()); 
+		t.setNoteSequence(nh);
+		return pitchDistanceMetricCalculator(t);
+	}
 	//se o de cima funciona, esse funciona
 	public static double chromaticPitchDurationMetricCalculator(Track tr) {
 		Track t = new Track("aux");
@@ -114,6 +141,14 @@ public abstract class ZipfMetrics {
 		ArrayList<NoteHerremans> nh = convertMod12Pitch(t.getNoteSequence());
 		int cP[] = countPitchDurationFrequency(nh);
 		return calculateLinearRegression(cP);
+	}
+	
+	public static double chromaticPitchMetricCalculator(Track tr) {
+		Track t = new Track("aux");
+		t.setNoteSequence(Fitness.copyNoteSequence(tr).getNoteSequence());
+		ArrayList<NoteHerremans> nh = convertMod12Pitch(t.getNoteSequence()); 
+		t.setNoteSequence(nh);
+		return pitchMetricCalculator(t, 12);
 	}
 	
 	public static double melodicIntervalMetricCalculator (Track tr) {
@@ -144,24 +179,8 @@ public abstract class ZipfMetrics {
 		
 	}
 	
-	//teste pendente
-	public static double pitchDistanceMetricCalculator (Track tr) {
-		ArrayList<NoteForCount> nfcs = convertPitchDistance(tr);
-		int cP[] = new int[nfcs.size()];
-		for (NoteForCount nfc: nfcs) {
-			cP[nfcs.indexOf(nfc)] = nfc.getCount();
-		}
-		Arrays.sort(cP);
-		return calculateLinearRegression(cP);
-	}
-	//se pitchDistanceMetric funciona, este tb funciona.
-	public static double chromaticPitchDistanceMetricCalculator (Track tr) {
-		Track t = new Track("aux");
-		t.setNoteSequence(Fitness.copyNoteSequence(tr).getNoteSequence());
-		ArrayList<NoteHerremans> nh = convertMod12Pitch(t.getNoteSequence()); 
-		t.setNoteSequence(nh);
-		return pitchDistanceMetricCalculator(t);
-	}
+	
+	
 	
 	public static double rhythmMetricCalculator (Track tr) {
 		ArrayList<NoteHerremans> nhs = convertRhythm(tr.getNoteSequence());
