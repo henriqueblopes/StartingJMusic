@@ -6,6 +6,7 @@ public final class Constants {
 	
 	//CrossOvers
 	public static final String CROSS_OVER_BAR = "crossOverBar";
+	public static final String CROSS_OVER_NOTE = "crossOverNote";
 	
 	//Selections
 	public static final String BINARY_TOURNAMENT = "binaryTournament";
@@ -15,7 +16,8 @@ public final class Constants {
 	public static final String  EUCLIDIAN_DISTANCE_ZIPF = "euclidianDistanceZipf";
 	
 	//Mutations
-	public static final String CHANGE_ONE_NOTE = "changeOneNote";
+	/*public static final String CHANGE_ONE_NOTE = "changeOneNote";
+	public static final String MUTATE_MELODIC_TRIGRAM = "mutateMelodicTrigram";*/
 	
 	//Constantes Numéricas
 	public static final int N_DURATIONS = 18;
@@ -29,6 +31,10 @@ public final class Constants {
 	public static final int WITHOUT_TRIPLETS = 12;
 	public static final int WITHOUT_TRIPLETS_DOUBLEDOTTED = 9;
 	public static final int WITHOUT_TRIPLETS_DOUBLEDOTTED_DOTTED = 5;
+	
+	//Constantes de geração musical
+	public static final String BAR = "bar";
+	public static final String NOTE = "note";
 	
 	
 	

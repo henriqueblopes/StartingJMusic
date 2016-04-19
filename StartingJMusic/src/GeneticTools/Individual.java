@@ -6,6 +6,7 @@ import java.util.Random;
 
 import jm.constants.Durations;
 import Constants.Constants;
+import Metrics.ZipfMetrics;
 import NoteEnconding.NoteHerremans;
 import NoteEnconding.Track;
 
@@ -14,8 +15,20 @@ public class Individual {
 	private double fitness;
 	private int musicLengthBars;
 	private Random r;
-	 
-	public Individual(int musicLengthBars) {
+	private String generationType;
+	private ZipfMetrics zipfMetrics;
+	
+	public Individual (int musicLenghtNotes, String generationType) {
+		r = new Random();
+		//r.setSeed(0);
+		r.setSeed(System.currentTimeMillis());
+		this.musicLengthBars = musicLenghtNotes;
+		this.generationType = generationType;
+		Date d = new Date(System.currentTimeMillis());
+		track = new Track("M_"+(d.getYear()+1900)+"_"+(d.getMonth()+1)+"_"+d.getDate()+"_"+d.getHours()+"_"+d.getMinutes()+"_"+d.getSeconds()+".mid");
+		fitness = 0;
+	}
+	/*public Individual(int musicLengthBars) {
 		r = new Random();
 		//r.setSeed(0);
 		r.setSeed(System.currentTimeMillis());
@@ -23,15 +36,20 @@ public class Individual {
 		Date d = new Date(System.currentTimeMillis());
 		track = new Track("M_"+(d.getYear()+1900)+"_"+(d.getMonth()+1)+"_"+d.getDate()+"_"+d.getHours()+"_"+d.getMinutes()+"_"+d.getSeconds()+".mid");
 		fitness = 0;
-	}
+	}*/
 	
-	public Individual(Track track) {
+	public Individual(Track track, String generationType) {
 		r = new Random();
 		r.setSeed(0);
+		this.generationType = generationType;
 		//r.setSeed(System.currentTimeMillis());
-		this.musicLengthBars = track.getBarNumber();
+		if (this.generationType.equals(Constants.NOTE))
+			this.musicLengthBars = track.getNoteSequence().size();
+		else
+			this.musicLengthBars = track.getBarNumber();
 		this.setTrack(track);;
 		fitness = 0;
+		setZipfMetrics(new ZipfMetrics(getTrack()));
 	}
 	public int getMusicLenthBars () {
 		return this.musicLengthBars;
@@ -49,7 +67,23 @@ public class Individual {
 		this.fitness = fitness;
 	}
 	
+	public ZipfMetrics getZipfMetrics() {
+		return zipfMetrics;
+	}
+
+	private void setZipfMetrics(ZipfMetrics zipfMetrics) {
+		this.zipfMetrics = zipfMetrics;
+	}
+
 	public void createTrack() {
+		if (generationType.equals(Constants.BAR))
+			createTrackBar();
+		else if (generationType.equals(Constants.NOTE))
+			createTrackNote();
+		setZipfMetrics(new ZipfMetrics(getTrack()));
+	}
+	
+	private void createTrackBar() {
 		// TODO Auto-generated method stub
 		int bar = 1;
 		double barTempo = 0.0;
@@ -111,7 +145,12 @@ public class Individual {
 			}
 		}
 	}
-	private double randomDuration() {
+	
+	private void createTrackNote () {
+		for (int i = 0; i < musicLengthBars; i++)
+			this.getTrack().getNoteSequence().add(createRandomNote());
+	}
+	public double randomDuration() {
 		double rDuration = 0.0;
 		int a = r.nextInt(Constants.WITHOUT_NOTHING);
 		switch (a) {

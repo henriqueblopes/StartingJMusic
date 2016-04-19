@@ -11,7 +11,6 @@ public class GeneticAlgorithm {
 	private ArrayList<Individual> population;
 	private int populationLength;
 	private int generations;
-	private int maxIterations;
 	private double crossOverRate;
 	private double mutationRate;
 	private int musicLengthBar;
@@ -20,16 +19,18 @@ public class GeneticAlgorithm {
 	private String fitnessMethod;
 	private String mutationMethod;
 	private ArrayList<Individual> convergence;
+	private String generationType;
 	
-	public GeneticAlgorithm (int populationLength, int generations, int maxIterations, 
+	public GeneticAlgorithm (int populationLength, int generations,
 			double crossOverRate, double mutationRate, int musicLengthBar, String selectionMethod,
-			String crossOverMethod, String fitnessMethod, String mutationMethod) {
+			String crossOverMethod, String fitnessMethod, String mutationMethod,
+			String generationType) {
+			
 		
 		this.setPopulation(new ArrayList<Individual>());
 		this.setConvergence(new ArrayList<Individual>());
 		this.setPopulationLength(populationLength);
 		this.setGenerations(generations);
-		this.setMaxIterations(maxIterations);
 		this.setCrossOverRate(crossOverRate);
 		this.setMutationRate(mutationRate);
 		this.setMusicLengthBar(musicLengthBar);
@@ -37,6 +38,7 @@ public class GeneticAlgorithm {
 		this.setCrossOverMethod(crossOverMethod);
 		this.setFitnessMethod(fitnessMethod);
 		this.setMutationMethod(mutationMethod);
+		this.setGenerationType(generationType);
 		
 	}
 
@@ -59,13 +61,6 @@ public class GeneticAlgorithm {
 	}
 	private void setCrossOverRate(double crossOverRate) {
 		this.crossOverRate = crossOverRate;
-	}
-
-	private int getMaxIterations() {
-		return maxIterations;
-	}
-	private void setMaxIterations(int maxIterations) {
-		this.maxIterations = maxIterations;
 	}
 
 	private int getGenerations() {
@@ -130,9 +125,17 @@ public class GeneticAlgorithm {
 		this.convergence = convergence;
 	}
 
+	private String getGenerationType() {
+		return generationType;
+	}
+
+	private void setGenerationType(String generationType) {
+		this.generationType = generationType;
+	}
+
 	public void initializeRandomPopulation() {
 		for (int i = 0; i < this.getPopulationLength(); i++) {
-			Individual ind = new Individual(getMusicLengthBar());
+			Individual ind = new Individual(getMusicLengthBar(), getGenerationType());
 			ind.createTrack();
 			Fitness.fitness(ind, getFitnessMethod());
 			getPopulation().add(ind);
@@ -149,9 +152,9 @@ public class GeneticAlgorithm {
 			while (offSpring.size() < getPopulationLength()) {
 				Random r = new Random();
 				if (r.nextFloat() < getCrossOverRate()) {
-					Individual i1 = new Individual(getMusicLengthBar());
+					Individual i1 = new Individual(getMusicLengthBar(), getGenerationType());
 					i1.setTrack(Fitness.copyNoteSequence(Selection.selection(getPopulation(),getSelectionMethod()).getTrack()));
-					Individual i2 = new Individual(getMusicLengthBar());
+					Individual i2 = new Individual(getMusicLengthBar(), getGenerationType());
 					i2.setTrack(Fitness.copyNoteSequence(Selection.binaryTournament(getPopulation()).getTrack()));
 					Individual[] ii = CrossOver.crossOver(i1, i2, getMusicLengthBar(), getCrossOverMethod()).clone();
 					Fitness.fitness(ii[0], getFitnessMethod());
@@ -166,13 +169,12 @@ public class GeneticAlgorithm {
 					}
 				}
 				if(r.nextFloat() < getMutationRate()) {
-					Individual i1 = new Individual(getMusicLengthBar());
-					i1.setTrack(Fitness.copyNoteSequence(Selection.binaryTournament(getPopulation()).getTrack()));
+					Individual i1 = new Individual(Fitness.copyNoteSequence(Selection.binaryTournament(getPopulation()).getTrack()), getGenerationType());
 					Date d = new Date(System.currentTimeMillis());
 					i1.getTrack().setName("M_"+(d.getYear()+1900)+"_"+(d.getMonth()+1)+"_"+d.getDate()+"_"+d.getHours()+"_"+d.getMinutes()+"_"+d.getSeconds()+".mid");
 					if (offSpring.size() < getPopulationLength()) {
-						Fitness.fitness(i1, getFitnessMethod());
 						offSpring.add(Mutation.mutation(i1, getMutationMethod()));
+						Fitness.fitness(i1, getFitnessMethod());
 					}
 					else
 						break;
@@ -203,7 +205,7 @@ public class GeneticAlgorithm {
 		
 		Date d = new Date(System.currentTimeMillis());
 	
-		File file = new File("/Users/Henrique/master/workspace/StartingJMusic/Convergencia/convergence_"+(d.getYear()+1900)+"_"+(d.getMonth()+1)+"_"+d.getDate()+"_"+d.getHours()+"_"+d.getMinutes()+"_"+d.getSeconds()+".dat");
+		File file = new File("Convergencia/convergence_"+(d.getYear()+1900)+"_"+(d.getMonth()+1)+"_"+d.getDate()+"_"+d.getHours()+"_"+d.getMinutes()+"_"+d.getSeconds()+".dat");
 		try {
 			if (!file.exists()) {
 				file.createNewFile();

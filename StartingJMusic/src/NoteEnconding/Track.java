@@ -105,7 +105,7 @@ public class Track implements JMC{
 		Score tmp = new Score(this.getName());
 		tmp.setTempo(bpm);
 		tmp.add(p);
-		Write.midi(tmp, "/Users/Henrique/master/workspace/StartingJMusic/CreatedMelodies/"+this.getName());
+		Write.midi(tmp, "CreatedMelodies/"+this.getName());
 			
 	}
 	

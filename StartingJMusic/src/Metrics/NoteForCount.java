@@ -1,6 +1,7 @@
 package Metrics;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import NoteEnconding.NoteHerremans;
 
@@ -29,5 +30,12 @@ public class NoteForCount extends NoteHerremans{
 
 	public void setnGram(ArrayList<NoteHerremans> nGram) {
 		this.nGram = nGram;
+	}
+	
+	class NoteForCountComparator implements Comparator<NoteForCount>{
+		@Override
+		public int compare(NoteForCount arg0, NoteForCount arg1) {
+			return arg0.getCount() - arg1.getCount();  
+		}
 	}
 }

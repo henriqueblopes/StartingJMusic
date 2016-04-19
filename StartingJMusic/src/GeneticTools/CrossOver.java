@@ -53,11 +53,11 @@ public abstract class CrossOver {
 		}
 		
 		crossIndividual(i1, i2, i, j, nh1, nh2);
-		crossedOver[0] = new Individual(musicLengthBar);
+		crossedOver[0] = new Individual(musicLengthBar, Constants.Constants.BAR);
 		Date d = new Date(System.currentTimeMillis());
 		crossedOver[0].setTrack(new Track("M_"+(d.getYear()+1900)+"_"+(d.getMonth()+1)+"_"+d.getDate()+"_"+d.getHours()+"_"+d.getMinutes()+"_"+d.getSeconds()+".mid"));
 		crossedOver[0].getTrack().setNoteSequence((new ArrayList<NoteHerremans>(nh1)));
-		crossedOver[1] = new Individual(musicLengthBar);
+		crossedOver[1] = new Individual(musicLengthBar, Constants.Constants.BAR);
 		crossedOver[1].setTrack(new Track("M_"+(d.getYear()+1900)+"_"+(d.getMonth()+1)+"_"+d.getDate()+"_"+d.getHours()+"_"+d.getMinutes()+"_"+d.getSeconds()+".mid"));
 		crossedOver[1].getTrack().setNoteSequence((new ArrayList<NoteHerremans>(nh2)));
 		return crossedOver;
@@ -88,5 +88,24 @@ public abstract class CrossOver {
 			nh2.get(j).setTied(0);
 		}
 		
+	}
+	
+	public static Individual[] crossOverNote(Individual i1, Individual i2, int musicLength) {
+		Random r = new Random();
+		int a = r.nextInt(musicLength-1)+1;
+		ArrayList<NoteHerremans> nh1 = new ArrayList();
+		ArrayList<NoteHerremans> nh2 = new ArrayList();
+		crossIndividual(i1, i2, a, a, nh1, nh2);
+		Individual[] crossedOver = new Individual[2];
+		
+		Date d = new Date(System.currentTimeMillis());
+		Track aux = new Track("M_"+(d.getYear()+1900)+"_"+(d.getMonth()+1)+"_"+d.getDate()+"_"+d.getHours()+"_"+d.getMinutes()+"_"+d.getSeconds()+".mid");
+		aux.setNoteSequence((new ArrayList<NoteHerremans>(nh1)));
+		crossedOver[0] = new Individual(aux, Constants.Constants.NOTE);
+		
+		aux = new Track("M_"+(d.getYear()+1900)+"_"+(d.getMonth()+1)+"_"+d.getDate()+"_"+d.getHours()+"_"+d.getMinutes()+"_"+d.getSeconds()+".mid");
+		aux.setNoteSequence((new ArrayList<NoteHerremans>(nh2)));
+		crossedOver[1] = new Individual(aux, Constants.Constants.NOTE);
+		return crossedOver;
 	}
 }
