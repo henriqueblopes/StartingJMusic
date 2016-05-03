@@ -35,8 +35,8 @@ public final class Main implements JMC {
 		
 		//evalRandomInvididual();
 		//testPerformanceFitness();
-		//evalInputMusic();
-		runGenetic();		
+		evalInputMusic();
+		//runGenetic();		
 	}
 	
 	public static void printMusic(Individual i1) {
@@ -50,6 +50,7 @@ public final class Main implements JMC {
 		}
 		System.out.println(); System.out.println();
 	}
+	
 	public static void printChromaticMusic(Individual i1) {
 		int i = 1;
 		for (NoteHerremans nh: i1.getTrack().getNoteSequence()) {
@@ -84,45 +85,51 @@ public final class Main implements JMC {
 		System.out.println("PitchMetric: " + max.getZipfMetrics().pitchMetricCalculator(max.getTrack()));
 		System.out.println("PitchDistanceMetric: " + max.getZipfMetrics().pitchDistanceMetricCalculator(max.getTrack()));
 		System.out.println("PitchDurationMetric: " + max.getZipfMetrics().pitchDurationMetricCalculator(max.getTrack()));
-		System.out.println("ChrPitchMetric: " + max.getZipfMetrics().chromaticPitchMetricCalculator(max.getTrack()));
 		System.out.println("ChrPitchDistanceMetric: " + max.getZipfMetrics().chromaticPitchDistanceMetricCalculator(max.getTrack()));
 		System.out.println("ChrPitchDurationMetric: " + max.getZipfMetrics().chromaticPitchDurationMetricCalculator(max.getTrack()));
-		System.out.println("DurationMetric: " + max.getZipfMetrics().durationMetricCalculator(max.getTrack()));
+		System.out.println("ChrPitchMetric: " + max.getZipfMetrics().chromaticPitchMetricCalculator(max.getTrack()));
 		System.out.println("MelodicIntMetric: " + max.getZipfMetrics().melodicIntervalMetricCalculator(max.getTrack()));
 		System.out.println("MelodicBigamMetric: " + max.getZipfMetrics().melodicBigramMetricCalculator(max.getTrack()));
 		System.out.println("MelodicTrigamMetric: " + max.getZipfMetrics().melodicTrigramMetricCalculator(max.getTrack()));
+		System.out.println("DurationMetric: " + max.getZipfMetrics().durationMetricCalculator(max.getTrack()));
+		System.out.println("RhythmMetric: " + max.getZipfMetrics().rhythmMetricCalculator(max.getTrack()));
+		System.out.println("RhythmIntervalMetric: " + max.getZipfMetrics().rhythmIntervalMetricCalculator(max.getTrack()));
 		System.out.println("RhythmBigramMetric: " + max.getZipfMetrics().rhythmBigramMetricCalculator(max.getTrack()));
 		System.out.println("RhythmTrigamMetric: " + max.getZipfMetrics().rhythmTrigramMetricCalculator(max.getTrack()));
-		System.out.println("RhythmIntervalMetric: " + max.getZipfMetrics().rhythmIntervalMetricCalculator(max.getTrack()));
-		System.out.println("RhythmMetric: " + max.getZipfMetrics().rhythmMetricCalculator(max.getTrack()));
 		System.out.println("Fitness: " + max.getFitness()) ;
 	}
 	
 	public static void runGenetic () {
 		String selection = Constants.BINARY_TOURNAMENT;
 		String crossOver = Constants.CROSS_OVER_NOTE;
-		String fitness = Constants.EUCLIDIAN_DISTANCE_ZIPF;
+		String fitness = Constants.ZIPF_FITNESS_ERROR_FIT;
 		String mutation = MutationConstants.MUTATE_MELODIC_AND_RHYTHM_TRIGRAM;
-		GeneticAlgorithm ga = new GeneticAlgorithm(200, 2000, 0.95, 0.5, 120, selection, crossOver, fitness, mutation, Constants.NOTE);
-		ArrayList<Individual> sol = ga.runGenetic();
+		GeneticAlgorithm ga = new GeneticAlgorithm(200, 1500, 0.95, 0.5, 120, selection, crossOver, fitness, mutation, Constants.NOTE);
+		ga.runGenetic();
 		ga.exportConvergence();
 		Individual max = ga.returnMaxIndividual();
+		max.getTrack().setName(fitness+max.getTrack().getName());
 		max.getTrack().trackToMidi();
+		max.getZipfMetrics().writeZipfData(max.getTrack());
 		Fitness.euclidianDistanceZipf(max);
 		printCoefFitness(max);
-		//shit
+
 	}
 	
 	public static void evalInputMusic () {
+		String fitness = Constants.ZIPF_FITNESS;
 		Score tmp = new Score("tmp.mid");
 		//Read.midi(tmp, "midis/megadeth-TornadoOfSouls-Solo.mid");
-		Read.midi(tmp, "TrechosMidis/bethoven-quintasinfonia1.mid");
+		//Read.midi(tmp, "TrechosMidis/bethoven-quintasinfonia1.mid");
 		//Read.midi(tmp, "TrechosMidis/JohnsonEric-CliffsofDover.mid");
+		Read.midi(tmp, "TrechosMidis/beattles-heyjude.mid");
 		Track t = new Track(tmp.getPart(0).getPhrase(0), "Track1");
-		Individual i1 = new Individual(t, Constants.BAR);
-		Fitness.fitness(i1, Constants.ZIPF_FITNESS);
+		Individual i1 = new Individual(t, Constants.NOTE);
+		i1.getZipfMetrics().setZipfCountMethod(fitness);
+		Fitness.fitness(i1, fitness);
 		System.out.println("Fitness: " + i1.getFitness()) ;
 		printCoefFitness(i1);
+		//i1.getZipfMetrics().writeZipfData(i1.getTrack());
 	}
 	
 	public static void testPerformanceFitness () {
@@ -136,10 +143,14 @@ public final class Main implements JMC {
 	}
 	
 	public static void evalRandomInvididual () {
-		Individual i1 = new Individual(200, Constants.NOTE);
+		String fit = Constants.ZIPF_FITNESS_ERROR_FIT;
+		Individual i1 = new Individual(120, Constants.NOTE);
 		i1.createTrack();
-		Fitness.fitness(i1, Constants.ZIPF_FITNESS);
+		i1.getZipfMetrics().setZipfCountMethod(fit);
+		Fitness.fitness(i1, fit);
 		printCoefFitness(i1);
+		i1.getZipfMetrics().writeZipfData(i1.getTrack());
+		
 	}
 	
 }

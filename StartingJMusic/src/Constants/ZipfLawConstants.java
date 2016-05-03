@@ -16,4 +16,5 @@ public final class ZipfLawConstants {
 	public static final String RHYTHMTRIGAM_METRIC_CALCULATOR = "rhythmTrigramMetricCalculator";
 	public static final String RHYTHMINTERVAL_METRIC_CALCULATOR = "rhythmIntervalMetricCalculator";
 	public static final String RHYTHM_METRIC_CALCULATOR = "rhythmMetricCalculator";
+	
 }

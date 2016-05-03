@@ -71,10 +71,19 @@ public class Mutation {
 		int nGramOrder = 3;
 		Random r = new Random();
 		int a = 0;
-		if (i.getZipfMetrics().melodicTrigramMetricCalculator(i.getTrack()) < targetSlope) 
-			a = r.nextInt(i.getZipfMetrics().getCountedMelodicTrigrams().size()/2)+i.getZipfMetrics().getCountedMelodicTrigrams().size()/2;
-		else
-			a = r.nextInt(i.getZipfMetrics().getCountedMelodicTrigrams().size()/2);
+		if (i.getZipfMetrics().melodicTrigramMetricCalculator(i.getTrack()) > targetSlope) {
+			if (r.nextInt(10) < 9)
+				a = r.nextInt(i.getZipfMetrics().getCountedMelodicTrigrams().size()/2)+i.getZipfMetrics().getCountedMelodicTrigrams().size()/2;
+			else
+				a = r.nextInt(i.getZipfMetrics().getCountedMelodicTrigrams().size()/2);
+		}
+		else {
+			if (r.nextInt(10) < 9)
+				a = r.nextInt(i.getZipfMetrics().getCountedMelodicTrigrams().size()/2);
+			else
+				a = r.nextInt(i.getZipfMetrics().getCountedMelodicTrigrams().size()/2)+i.getZipfMetrics().getCountedMelodicTrigrams().size()/2;
+		}
+			
 		int b = r.nextInt(i.getZipfMetrics().getCountedMelodicTrigrams().get(a).getCount())+1;
 		int c = 1;
 		
@@ -126,11 +135,20 @@ public class Mutation {
 		int nGramOrder = 3;
 		Random r = new Random();
 		int a = 0;
-		if (i.getZipfMetrics().rhythmTrigramMetricCalculator(i.getTrack()) < targetSlope) 
-			a = r.nextInt(i.getZipfMetrics().getCountedRhythmTrigrams().size()/2)+i.getZipfMetrics().getCountedRhythmTrigrams().size()/2;
-		else
-			a = r.nextInt(i.getZipfMetrics().getCountedRhythmTrigrams().size()/2);
+		if (i.getZipfMetrics().rhythmTrigramMetricCalculator(i.getTrack()) > targetSlope) {
+			if (r.nextInt(10) < 9)
+				a = r.nextInt(i.getZipfMetrics().getCountedRhythmTrigrams().size()/2)+i.getZipfMetrics().getCountedRhythmTrigrams().size()/2;
+			else
+				a = r.nextInt(i.getZipfMetrics().getCountedRhythmTrigrams().size()/2);
+		}
+		else {
+			if (r.nextInt(10) > 8)
+				a = r.nextInt(i.getZipfMetrics().getCountedRhythmTrigrams().size()/2)+i.getZipfMetrics().getCountedRhythmTrigrams().size()/2;
+			else
+				a = r.nextInt(i.getZipfMetrics().getCountedRhythmTrigrams().size()/2);
+		}
 		int b = r.nextInt(i.getZipfMetrics().getCountedRhythmTrigrams().get(a).getCount())+1;
+		
 		int c = 1;
 		
 		NoteForCount trigram = i.getZipfMetrics().getCountedRhythmTrigrams().get(a);

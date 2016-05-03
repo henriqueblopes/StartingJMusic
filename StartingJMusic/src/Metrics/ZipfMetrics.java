@@ -1,8 +1,10 @@
 package Metrics;
 import Constants.Constants;
+import Constants.ZipfLawConstants;
 import GeneticTools.Fitness;
 import GeneticTools.Individual;
 import GeneticTools.Mutation;
+import JMusicTools.FileTools;
 import NoteEnconding.NoteHerremans;
 
 import java.lang.reflect.InvocationTargetException;
@@ -45,11 +47,11 @@ public class ZipfMetrics {
 	private ArrayList<NoteForCount>  countedRhythmBigrams;
 	private ArrayList<NoteForCount>  countedRhythmTrigrams;
 	
-	
+	private String zipfData;
+	private static String zipfCountMethod = Constants.ZIPF_FITNESS;
 	
 	public ZipfMetrics (Track t) {
-		//this.pitchDistances;
-		//Track t = Fitness.copyNoteSequence(tr);
+		zipfData = "";
 		chromaticPitchs = convertMod12Pitch(t.getNoteSequence());
 		setMelodicIntervals(convertMelodicInterval(t.getNoteSequence()));
 		rhythms = convertRhythm(t.getNoteSequence());
@@ -57,7 +59,6 @@ public class ZipfMetrics {
 	}
 		
 	public double fractalMetricCalculator(Track tr, int noteMin, String zipfLaw) {
-		double a = pitchMetricCalculator(tr, 128);
 		HashMap<Integer, ArrayList<Double>> angMap = new HashMap<Integer, ArrayList<Double>>();
 		int heightTree =1;
 		for (int i = tr.getNoteSequence().size(); i >noteMin; i=i/2) {
@@ -106,9 +107,9 @@ public class ZipfMetrics {
 				angMap.get(mapPosition).add(a);
 				if (mapPosition < maxHeight) {
 					Track t1half = new Track("aux");
-					t1half.setNoteSequence(new ArrayList(tr.getNoteSequence().subList(0, tr.getNoteSequence().size()/2)));
+					t1half.setNoteSequence(new ArrayList<NoteHerremans>(tr.getNoteSequence().subList(0, tr.getNoteSequence().size()/2)));
 					Track t2half = new Track("aux");
-					t2half.setNoteSequence(new ArrayList(tr.getNoteSequence().subList(tr.getNoteSequence().size()/2, tr.getNoteSequence().size())));
+					t2half.setNoteSequence(new ArrayList<NoteHerremans>(tr.getNoteSequence().subList(tr.getNoteSequence().size()/2, tr.getNoteSequence().size())));
 					recursiveFractalMetricCalculator(t1half, angMap, mapPosition+1, method, maxHeight);
 					recursiveFractalMetricCalculator(t2half, angMap, mapPosition+1, method, maxHeight);
 				}
@@ -124,7 +125,9 @@ public class ZipfMetrics {
 	}
 	
 	public double pitchMetricCalculator(Track tr) {
-		return pitchMetricCalculator(tr, 128);
+		int cP[] = countPitchFrequency(tr.getNoteSequence(), 128);
+		return performZipfCalculation(cP);
+		//return pitchMetricCalculator(tr, 128);
 	}
 	
 	//teste pendente
@@ -135,7 +138,7 @@ public class ZipfMetrics {
 			cP[nfcs.indexOf(nfc)] = nfc.getCount();
 		}
 		Arrays.sort(cP);
-		return calculateLinearRegression(cP);
+		return performZipfCalculation(cP);
 	}
 	
 	//seria bom fazer mais alguns testes (fixar semente e fazer resultado na mão)
@@ -143,7 +146,7 @@ public class ZipfMetrics {
 		Track t = new Track("aux");
 		t.setNoteSequence(Fitness.copyNoteSequence(tr).getNoteSequence());
 		int cP[] = countPitchDurationFrequency(t.getNoteSequence());
-		return calculateLinearRegression(cP);
+		return performZipfCalculation(cP);
 	}
 	
 	//se pitchDistanceMetric funciona, este tb funciona.
@@ -160,25 +163,21 @@ public class ZipfMetrics {
 		//t.setNoteSequence(Fitness.copyNoteSequence(tr).getNoteSequence());
 		t.setNoteSequence(chromaticPitchs);*/
 		int cP[] = countPitchDurationFrequency(chromaticPitchs);
-		return calculateLinearRegression(cP);
+		return performZipfCalculation(cP);
 	}
 	
 	public double chromaticPitchMetricCalculator(Track tr) {
 		Track t = new Track("aux");
-		//t.setNoteSequence(Fitness.copyNoteSequence(tr).getNoteSequence());
-		 
 		t.setNoteSequence(chromaticPitchs);
-		
-		double a = pitchMetricCalculator(t, 12);
-		
-		return a;
+		int cP[] = countPitchFrequency(t.getNoteSequence(), 12);
+		return performZipfCalculation(cP);
 	}
 	
 	public double melodicIntervalMetricCalculator (Track tr) {
 		//ArrayList<NoteHerremans> melodicIntervals = new ArrayList<NoteHerremans>();
 		//melodicIntervals = convertMelodicInterval(tr.getNoteSequence());
 		int cP[] = countMelodicIntervalFrequency(getMelodicIntervals(), 128*2);
-		return calculateLinearRegression(cP);
+		return performZipfCalculation(cP);
 	}
 	
 	//Acredito estar funcionando perfeitamente
@@ -186,19 +185,19 @@ public class ZipfMetrics {
 		//ArrayList<NoteHerremans> melodicIntervals = new ArrayList<NoteHerremans>();
 		//melodicIntervals = convertMelodicInterval(tr.getNoteSequence());
 		int cP[] = countMelodicNgramFrequency(getMelodicIntervals(), 2);
-		return calculateLinearRegression(cP);
+		return performZipfCalculation(cP);
 	}
 	
 	public double melodicTrigramMetricCalculator (Track tr) {
 	//	ArrayList<NoteHerremans> melodicIntervals = new ArrayList<NoteHerremans>();
 		//melodicIntervals = convertMelodicInterval(tr.getNoteSequence());
 		int cP[] = countMelodicNgramFrequency(getMelodicIntervals(), 3);
-		return calculateLinearRegression(cP);
+		return performZipfCalculation(cP);
 	}
 	
 	public double durationMetricCalculator (Track tr) {
 		int cP[] = countDurationFrequency(tr.getNoteSequence());
-		return calculateLinearRegression(cP);
+		return performZipfCalculation(cP);
 		
 	}
 	
@@ -208,13 +207,13 @@ public class ZipfMetrics {
 	public double rhythmMetricCalculator (Track tr) {
 		//ArrayList<NoteHerremans> nhs = convertRhythm(tr.getNoteSequence());
 		int cP[] = countRhythmFrequency(rhythms);
-		return calculateLinearRegression(cP);
+		return performZipfCalculation(cP);
 	}
 	
 	public double rhythmIntervalMetricCalculator (Track tr) {
 		//ArrayList<NoteHerremans> nhs = convertRhythmInterval(convertRhythm(tr.getNoteSequence()));
 		int cP[] = countRhythmFrequency(getRhythmIntervals());
-		return calculateLinearRegression(cP);
+		return performZipfCalculation(cP);
 		
 	}
 	
@@ -222,14 +221,14 @@ public class ZipfMetrics {
 		//ArrayList<NoteHerremans> rhythmIntervals = new ArrayList<NoteHerremans>();
 		//rhythmIntervals = convertRhythmInterval(convertRhythm(tr.getNoteSequence()));
 		int cP[] = countRhythmNgramFrequency(getRhythmIntervals(), 2);
-		return calculateLinearRegression(cP);
+		return performZipfCalculation(cP);
 	}
 	
 	public double rhythmTrigramMetricCalculator (Track tr) {
 		//ArrayList<NoteHerremans> rhythmIntervals = new ArrayList<NoteHerremans>();
 		//rhythmIntervals = convertRhythmInterval(convertRhythm(tr.getNoteSequence()));
 		int cP[] = countRhythmNgramFrequency(getRhythmIntervals(), 3);
-		return calculateLinearRegression(cP);
+		return performZipfCalculation(cP);
 	}
 	
 		
@@ -361,26 +360,6 @@ public class ZipfMetrics {
 		return returnNh;		
 	}
 
-	
-	private double pitchMetricCalculator(Track tr,  int length) {
-		//tr.sortNoteSequence();
-		
-		int cP[] = countPitchFrequency(tr.getNoteSequence(), length);
-		SimpleRegression sr = new SimpleRegression();
-		int i = cP.length-1;
-		while (cP[i] != 0) {
-			sr.addData(Math.log(cP.length-i), Math.log(cP[i]));
-			i--;
-			if(i<0)
-				break;
-		}
-		double a = sr.getMeanSquareError();
-		a = sr.getR();
-		a = sr.getSlopeStdErr();
-		a = sr.getRSquare();
-		return sr.getSlope();
-		
-	}
 	
 	private int[] countPitchFrequency(ArrayList<NoteHerremans> pitches, int length) {
 		Iterator<NoteHerremans> i = pitches.iterator();
@@ -552,6 +531,17 @@ public class ZipfMetrics {
 		//Arrays.sort(cP);
 		return cP;
 	}
+	private double performZipfCalculation (int cP[]) {
+		if (this.getZipfCountMethod().equals(Constants.ZIPF_FITNESS))
+			return calculateLinearRegression(cP);
+		else if (this.getZipfCountMethod().equals(Constants.ZIPF_FITNESS_ERROR_FIT))
+			return calculateErrorFit(cP);
+		else if (this.getZipfCountMethod().equals(Constants.ZIPF_FITNESS_RSQUARE))
+			return calculateLinearRegression(cP);
+		
+		return calculateLinearRegression(cP);
+		
+	}
 	private double calculateLinearRegression(int cP[]) {
 		//tr.sortNoteSequence();
 		SimpleRegression sr = new SimpleRegression();
@@ -567,12 +557,54 @@ public class ZipfMetrics {
 			if(i<0)
 				break;
 		}
+		
+		if(Double.isNaN(sr.getRSquare())) {
+			return 1.0;
+		}
+			
 		double a = sr.getMeanSquareError();
 		a = sr.getR();
 		a = sr.getSlopeStdErr();
-		a = sr.getRSquare();
-		return sr.getSlope();
+		if (getZipfCountMethod().equals(Constants.ZIPF_FITNESS_RSQUARE))
+			return sr.getRSquare();
+		else
+			return sr.getSlope();
 		
+	}
+	
+	private double calculateErrorFit(int cP[]) {
+		double a = 0.0;
+		double b = -1.0;
+		double xMean = 0.0;
+		double yMean = 0.0;
+		double errorFit = 0.0;
+		
+		if(cP.length == 0)
+			return -10.0;
+		if(cP.length == 1)
+			return -10.0;
+			//return -0.5;
+		int i = cP.length-1;
+		while (cP[i] != 0) {
+			xMean += Math.log(cP.length-i);
+			yMean += Math.log(cP[i]);
+			i--;
+			if(i<0)
+				break;
+		}
+		xMean = xMean/(cP.length-i-1);
+		yMean = yMean/(cP.length-i-1);
+		
+		a = yMean - b*xMean;
+		
+		i = cP.length-1;
+		while (cP[i] != 0) {
+			errorFit += Math.pow(Math.log(cP[i]) - a - b*Math.log(cP.length-i), 2);
+			i--;
+			if(i<0)
+				break;
+		}
+		return errorFit/(cP.length-i-1);
 	}
 	
 	private int returnDuration (double duration) {
@@ -697,10 +729,95 @@ public class ZipfMetrics {
 		this.rhythmIntervals = rhythmIntervals;
 	}
 
+	private String getZipfCountMethod() {
+		return zipfCountMethod;
+	}
+
+	public void setZipfCountMethod(String zipfCountMethod) {
+		ZipfMetrics.zipfCountMethod = zipfCountMethod;
+	}
+
 	class NoteForCountComparator implements Comparator<NoteForCount>{
 		@Override
 		public int compare(NoteForCount arg0, NoteForCount arg1) {
 			return arg0.getCount() - arg1.getCount();  
 		}
+	}
+	
+	public void writeZipfData(Track tr) {
+		int[] cP = countPitchFrequency(tr.getNoteSequence(), 128);
+		calcZipfString(cP);
+		
+		ArrayList<NoteForCount> nfcs = convertCountPitchDistance(tr);
+		cP = new int[nfcs.size()];
+		for (NoteForCount nfc: nfcs) {
+			cP[nfcs.indexOf(nfc)] = nfc.getCount();
+		}
+		Arrays.sort(cP);
+		calcZipfString(cP);
+		
+		Track t = new Track("aux");
+		t.setNoteSequence(Fitness.copyNoteSequence(tr).getNoteSequence());
+		cP = countPitchDurationFrequency(t.getNoteSequence());
+		calcZipfString(cP);
+		
+		t.setNoteSequence(chromaticPitchs);
+		nfcs = convertCountPitchDistance(t);
+		cP = new int[nfcs.size()];
+		for (NoteForCount nfc: nfcs) {
+			cP[nfcs.indexOf(nfc)] = nfc.getCount();
+		}
+		Arrays.sort(cP);
+		calcZipfString(cP);
+		
+		cP = countPitchDurationFrequency(chromaticPitchs);
+		calcZipfString(cP);		
+		
+		t.setNoteSequence(chromaticPitchs);
+		cP = countPitchFrequency(t.getNoteSequence(), 12);
+		calcZipfString(cP);
+		
+		cP = countMelodicIntervalFrequency(getMelodicIntervals(), 128*2);
+		calcZipfString(cP);
+		
+		cP = countMelodicNgramFrequency(getMelodicIntervals(), 2);
+		calcZipfString(cP);
+		
+		cP = countMelodicNgramFrequency(getMelodicIntervals(), 3);
+		calcZipfString(cP);
+		
+		cP = countDurationFrequency(tr.getNoteSequence());
+		calcZipfString(cP);
+		
+		cP = countRhythmFrequency(rhythms);
+		calcZipfString(cP);
+		
+		cP = countRhythmFrequency(getRhythmIntervals());
+		calcZipfString(cP);
+		
+		cP = countRhythmNgramFrequency(getRhythmIntervals(), 2);
+		calcZipfString(cP);
+		
+		cP = countRhythmNgramFrequency(getRhythmIntervals(), 3);
+		calcZipfString(cP);
+		
+		FileTools.exportDatedFile(zipfData, "PlotMaxMelody", tr.getName());
+		
+	}
+	private void calcZipfString(int[] cP) {
+		if(cP.length == 0)
+			return;
+		int i = cP.length-1;
+		while (cP[i] != 0) {
+			Double a = Math.log(cP[i]);
+			a.toString().substring(0, 3);
+			zipfData += a.toString() + " ";
+			i--;
+			if(i<0)
+				break;
+		}
+		for (int j = cP.length-1-i; j<=200; j++)
+			zipfData += "-1.0 ";
+		zipfData += "\n";
 	}
 }

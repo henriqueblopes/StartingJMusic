@@ -137,6 +137,7 @@ public class GeneticAlgorithm {
 		for (int i = 0; i < this.getPopulationLength(); i++) {
 			Individual ind = new Individual(getMusicLengthBar(), getGenerationType());
 			ind.createTrack();
+			ind.getZipfMetrics().setZipfCountMethod(getFitnessMethod());
 			Fitness.fitness(ind, getFitnessMethod());
 			getPopulation().add(ind);
 		}
@@ -193,6 +194,7 @@ public class GeneticAlgorithm {
 			if (i.getFitness() > max.getFitness())
 				max = i;
 		}
+		
 		return max;
 	}
 	

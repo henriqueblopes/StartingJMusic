@@ -152,7 +152,7 @@ public class Individual {
 	}
 	public double randomDuration() {
 		double rDuration = 0.0;
-		int a = r.nextInt(Constants.WITHOUT_NOTHING);
+		int a = r.nextInt(Constants.WITHOUT_TRIPLETS_DOUBLEDOTTED);
 		switch (a) {
 			case 0:
 				rDuration =  Durations.SEMIBREVE;

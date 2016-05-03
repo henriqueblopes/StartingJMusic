@@ -173,5 +173,27 @@ public abstract class Fitness {
 		return -Math.pow(counter,0.5);
 	}
 	
+	public static double zipfFitnessErrorFit (Individual i){
+		double a = 0.0;
+		a += i.getZipfMetrics().pitchMetricCalculator(i.getTrack());
+		a += i.getZipfMetrics().pitchDistanceMetricCalculator(i.getTrack());
+		a += i.getZipfMetrics().pitchDurationMetricCalculator(i.getTrack());
+		a += i.getZipfMetrics().chromaticPitchDistanceMetricCalculator(i.getTrack());
+		a += i.getZipfMetrics().chromaticPitchDurationMetricCalculator(i.getTrack());
+		a += i.getZipfMetrics().chromaticPitchMetricCalculator(i.getTrack());
+		a += i.getZipfMetrics().melodicIntervalMetricCalculator(i.getTrack());
+		a += i.getZipfMetrics().melodicBigramMetricCalculator(i.getTrack());
+		a += i.getZipfMetrics().melodicTrigramMetricCalculator(i.getTrack());
+		a += i.getZipfMetrics().durationMetricCalculator(i.getTrack());
+		a += i.getZipfMetrics().rhythmMetricCalculator(i.getTrack());
+		a += i.getZipfMetrics().rhythmIntervalMetricCalculator(i.getTrack());
+		a += i.getZipfMetrics().rhythmBigramMetricCalculator(i.getTrack());
+		a += i.getZipfMetrics().rhythmTrigramMetricCalculator(i.getTrack());
+		return -a;
+	}
+	
+	public static double zipfFitnessRSquare (Individual i){
+		return -zipfFitnessErrorFit(i);
+	}
 	
 }

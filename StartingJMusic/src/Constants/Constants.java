@@ -14,6 +14,8 @@ public final class Constants {
 	//Fitness
 	public static final String ZIPF_FITNESS = "zipfFitness";
 	public static final String  EUCLIDIAN_DISTANCE_ZIPF = "euclidianDistanceZipf";
+	public static final String  ZIPF_FITNESS_ERROR_FIT = "zipfFitnessErrorFit";
+	public static final String ZIPF_FITNESS_RSQUARE = "zipfFitnessRSquare";
 	
 	//Mutations
 	/*public static final String CHANGE_ONE_NOTE = "changeOneNote";
@@ -27,10 +29,10 @@ public final class Constants {
 	public static final double FRACTAL_PROXIMITY = 0.2;
 	
 	//Constantes de limitação de Duração
-	public static final int WITHOUT_NOTHING = 17;
-	public static final int WITHOUT_TRIPLETS = 12;
-	public static final int WITHOUT_TRIPLETS_DOUBLEDOTTED = 9;
-	public static final int WITHOUT_TRIPLETS_DOUBLEDOTTED_DOTTED = 5;
+	public static final int WITHOUT_NOTHING = 18;
+	public static final int WITHOUT_TRIPLETS = 11;
+	public static final int WITHOUT_TRIPLETS_DOUBLEDOTTED = 10;
+	public static final int WITHOUT_TRIPLETS_DOUBLEDOTTED_DOTTED = 6;
 	
 	//Constantes de geração musical
 	public static final String BAR = "bar";

@@ -20,6 +20,11 @@ public class Track implements JMC{
 		noteSequence = new ArrayList<NoteHerremans>();
 		this.name = name;
 	}
+	public Track(Phrase p) {
+		noteSequence = new ArrayList<NoteHerremans>();
+		for (Note n: p.getNoteArray()) 
+			noteSequence.add( new NoteHerremans(n.getPitch(), n.getRhythmValue()));
+	}
 	
 	public Track(Phrase p, String name){
 		this.name = name;
