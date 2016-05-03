@@ -1,0 +1,15 @@
+PitchMetric: 0.9569410544790937
+PitchDistanceMetric: 0.8532613937776988
+PitchDurationMetric: 0.8345491543115731
+ChrPitchDistanceMetric: 0.8936660961778355
+ChrPitchDurationMetric: 0.8958376222329703
+ChrPitchMetric: 0.9735345461729294
+MelodicIntMetric: 0.9232742185711562
+MelodicBigamMetric: 1.0
+MelodicTrigamMetric: 1.0
+DurationMetric: 0.9816321417849196
+RhythmMetric: 0.9784470472272128
+RhythmIntervalMetric: 0.9317418635886683
+RhythmBigramMetric: 0.7796356617235601
+RhythmTrigamMetric: 1.0
+Fitness: 13.002520800047616
