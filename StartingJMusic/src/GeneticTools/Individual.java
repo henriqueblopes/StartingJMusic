@@ -219,6 +219,13 @@ public class Individual {
 		//NoteHerremans nh = new NoteHerremans(pitch, 1.0);
 		return nh;
 	}
+	public int randomPitch() {
+		int pitch = r.nextInt(Constants.RANGE_MAX_PITCH-Constants.RANGE_MIN_PITCH+1)+Constants.RANGE_MIN_PITCH;
+		if (pitch == Constants.RANGE_MAX_PITCH+1)
+			pitch = -1;
+		return pitch;
+
+	}
 	
 }
 

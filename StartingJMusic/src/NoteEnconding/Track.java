@@ -2,6 +2,7 @@ package NoteEnconding;
 
 import java.util.ArrayList;
 
+import Constants.Constants;
 import jm.JMC;
 import jm.constants.Instruments;
 import jm.music.data.Note;
@@ -112,6 +113,33 @@ public class Track implements JMC{
 		tmp.add(p);
 		Write.midi(tmp, "CreatedMelodies/"+this.getName());
 			
+	}
+	
+	public void trackToScaleMidi(int type) {
+		//type = 1 Major, =2 Minor
+		ArrayList<Note> noteArray = new ArrayList<Note>();
+		for (NoteHerremans nh: getNoteSequence()) {
+			Note n = new Note();
+			int octave = nh.getMidiPitch()/7;
+			if(nh.getMidiPitch() == -1)
+				n.setPitch(nh.getMidiPitch());
+			else if (nh.getMidiPitch()%7 <3)
+				n.setPitch(2*(nh.getMidiPitch()%7) +octave*12);
+			else if (nh.getMidiPitch()%7 < 7)
+				n.setPitch(2*(nh.getMidiPitch()%7)-1 +octave*12);
+			n.setRhythmValue(nh.getDuration());
+			n.setDuration(nh.getDuration());
+			noteArray.add(n);
+		}
+		Phrase frase1 = new Phrase(Instruments.DISTORTED_GUITAR);
+		frase1.setStartTime(0);
+		frase1.addNoteList(noteArray.toArray(new Note[noteArray.size()]), false);
+		Part p = new Part();
+		p.add(frase1);
+		Score tmp = new Score(this.getName());
+		tmp.setTempo(bpm);
+		tmp.add(p);
+		Write.midi(tmp, "CreatedMelodiesInC+/"+this.getName());
 	}
 	
 	private void fixPause () {

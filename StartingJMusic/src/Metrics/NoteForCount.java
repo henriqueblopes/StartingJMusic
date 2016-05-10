@@ -32,7 +32,7 @@ public class NoteForCount extends NoteHerremans{
 		this.nGram = nGram;
 	}
 	
-	class NoteForCountComparator implements Comparator<NoteForCount>{
+	public class NoteForCountComparator implements Comparator<NoteForCount>{
 		@Override
 		public int compare(NoteForCount arg0, NoteForCount arg1) {
 			return arg0.getCount() - arg1.getCount();  

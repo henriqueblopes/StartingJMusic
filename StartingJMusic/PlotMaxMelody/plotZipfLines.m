@@ -1,11 +1,17 @@
 function [fitB, fitE] = plotZipfLines(zipfs, column)
-    %metrics = {'pitch', 'pitchDist', 'pitchDur', 'chroPitchDis', 'chroPitchDur', 'chroPitch', 'melodicInter', 'melodicBigram', 'melodicTrigram', 'duration', 'rhytym', 'rhytymInterval', 'rhytymBigram', 'rhytymTrigram'};
-    metrics = {'melodicInter', 'melodicBigram', 'melodicTrigram', 'duration', 'rhytym', 'rhytymInterval', 'rhytymBigram', 'rhytymTrigram'};
+    metrics = {'pitch', 'pitchDist', 'pitchDur', 'chroPitchDis', 'chroPitchDur', 'chroPitch', 'melodicInter', 'melodicBigram', 'melodicTrigram', 'duration', 'rhytym', 'rhytymInterval', 'rhytymBigram', 'rhytymTrigram'};
+    %metrics = {'duration', 'rhytym', 'rhytymInterval', 'rhytymBigram', 'rhytymTrigram'};
     i = 1;
     
     fitB = 0;
     fitE = 0;
-    for j=1:3
+    for j=1:14
+        
+        if rem(j-1,3) == 0
+            figure(j)
+            
+            
+        end
         X = zeros(1,1);
         Y = zeros(1,1);
         while zipfs(j,i) ~= -1
@@ -26,7 +32,7 @@ function [fitB, fitE] = plotZipfLines(zipfs, column)
             fitB = fitB + exp((-(-1.0-mdl.Coefficients.Estimate(2,1))^2)/0.5);
             fitE = fitE + e;
 
-            subplot(3,3,(j-1)*3 +column);
+            subplot(3,3,(rem(j-1,3))*3 +column);
             plot(X,Y,'*');
             hold on
             plot(X,mdl.Coefficients.Estimate(1,1) + mdl.Coefficients.Estimate(2,1)*X, 'r')

@@ -480,7 +480,7 @@ public class ZipfMetrics {
 		for (NoteForCount nfcAux: nfcs) {
 			cP[nfcs.indexOf(nfcAux)] = nfcAux.getCount();
 		}
-		this.countedPitchDurations = nfcs;
+		this.setCountedPitchDurations(nfcs);
 		//Arrays.sort(cP);
 		return cP;
 	}
@@ -713,6 +713,14 @@ public class ZipfMetrics {
 		this.countedRhythmTrigrams = countedRhythmTrigrams;
 	}
 
+	public ArrayList<NoteForCount> getCountedPitchDurations() {
+		return countedPitchDurations;
+	}
+
+	public void setCountedPitchDurations(ArrayList<NoteForCount> countedPitchDurations) {
+		this.countedPitchDurations = countedPitchDurations;
+	}
+
 	public ArrayList<NoteHerremans> getMelodicIntervals() {
 		return melodicIntervals;
 	}
@@ -737,12 +745,12 @@ public class ZipfMetrics {
 		ZipfMetrics.zipfCountMethod = zipfCountMethod;
 	}
 
-	class NoteForCountComparator implements Comparator<NoteForCount>{
+	/*public class NoteForCountComparator implements Comparator<NoteForCount>{
 		@Override
 		public int compare(NoteForCount arg0, NoteForCount arg1) {
 			return arg0.getCount() - arg1.getCount();  
 		}
-	}
+	}*/
 	
 	public void writeZipfData(Track tr) {
 		int[] cP = countPitchFrequency(tr.getNoteSequence(), 128);

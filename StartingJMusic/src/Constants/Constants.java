@@ -23,8 +23,8 @@ public final class Constants {
 	
 	//Constantes Numéricas
 	public static final int N_DURATIONS = 18;
-	public static final int RANGE_MIN_PITCH = 48;
-	public static final int RANGE_MAX_PITCH = 84;
+	public static final int RANGE_MIN_PITCH = 24;
+	public static final int RANGE_MAX_PITCH = 60;
 	public static final double EPSILON_DURATION = 0.005;
 	public static final double FRACTAL_PROXIMITY = 0.2;
 	
