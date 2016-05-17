@@ -33,10 +33,11 @@ public final class Main implements JMC {
 		//i1.getTrack().setName("exibicaoaleatoria.mid");
 		/*i1.getTrack().trackToMidi();*/
 		
-		evalRandomInvididual();
+		//evalRandomInvididual();
 		//testPerformanceFitness();
 		//evalInputMusic();
-		//runGenetic();		
+		//runGenetic(0, 5);
+		runGenetic(1, 5);
 	}
 	
 	public static void printMusic(Individual i1) {
@@ -99,21 +100,31 @@ public final class Main implements JMC {
 		System.out.println("Fitness: " + max.getFitness()) ;
 	}
 	
-	public static void runGenetic () {
-		String selection = Constants.BINARY_TOURNAMENT;
-		String crossOver = Constants.CROSS_OVER_NOTE;
-		String fitness = Constants.ZIPF_FITNESS_ERROR_FIT;
-		String mutation = MutationConstants.MUTATE_COPYING_PART_MUSIC;
-		GeneticAlgorithm ga = new GeneticAlgorithm(200, 1500, 0.95, 0.5, 120, selection, crossOver, fitness, mutation, Constants.NOTE);
-		ga.runGenetic();
-		ga.exportConvergence();
-		Individual max = ga.returnMaxIndividual();
-		max.getTrack().setName(fitness+mutation+max.getTrack().getName());
-		max.getTrack().trackToScaleMidi(0);
-		//max.getTrack().trackToMidi();
-		max.getZipfMetrics().writeZipfData(max.getTrack());
-		Fitness.euclidianDistanceZipf(max);
-		printCoefFitness(max);
+	public static void runGenetic (int inScale, int nReplics) {
+		for (int i = 0; i< nReplics; i++) {
+			if (inScale ==1)
+				Constants.RANGE_MAX_PITCH = Constants.RANGE_MIN_PITCH + 3*7;
+			String selection = Constants.BINARY_TOURNAMENT;
+			String crossOver = Constants.CROSS_OVER_NOTE;
+			String fitness = Constants.ZIPF_FITNESS;
+			String mutation = MutationConstants.MUTATE_ALL_METHODS;
+			GeneticAlgorithm ga = new GeneticAlgorithm(200, 1500, 0.90, 0.3, 120, selection, crossOver, fitness, mutation, Constants.NOTE);
+			ga.runGenetic();
+			ga.exportConvergence();
+			Individual max = ga.returnMaxIndividual();
+			max.getTrack().setName(fitness+mutation+max.getTrack().getName());
+			if (inScale ==1) {
+				max.getTrack().setName("C+"+max.getTrack().getName());
+				max.getTrack().trackToScaleMidi(0, fitness+mutation);
+			}
+			else
+				max.getTrack().trackToMidi(fitness+mutation);
+			
+			max.getZipfMetrics().writeZipfData(max.getTrack());
+			
+			Fitness.euclidianDistanceZipf(max);
+			printCoefFitness(max);
+		}
 
 	}
 	
@@ -145,12 +156,14 @@ public final class Main implements JMC {
 	
 	public static void evalRandomInvididual () {
 		String fit = Constants.ZIPF_FITNESS_ERROR_FIT;
-		Individual i1 = new Individual(120, Constants.NOTE);
+		Individual i1 = new Individual(10, Constants.NOTE);
+		
 		i1.createTrack();
 		i1.getZipfMetrics().setZipfCountMethod(fit);
+		i1.getZipfMetrics().pitchBigramMetricCalculator(i1.getTrack());
 		Fitness.fitness(i1, fit);
 		printCoefFitness(i1);
-		i1.getTrack().trackToScaleMidi(0);
+		//i1.getTrack().trackToScaleMidi(0, fitness+mutation);
 		i1.getZipfMetrics().writeZipfData(i1.getTrack());
 		
 	}

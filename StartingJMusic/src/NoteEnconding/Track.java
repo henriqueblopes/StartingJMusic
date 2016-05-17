@@ -78,7 +78,7 @@ public class Track implements JMC{
 	public void setName(String name) {
 		this.name = name;
 	}
-	public void trackToMidi () {
+	public void trackToMidi (String folder) {
 		ArrayList<Note> noteArray = new ArrayList<Note>();
 		//Note[] noteArray = new Note[noteSequence.size()];
 		Note n = new Note();
@@ -111,11 +111,11 @@ public class Track implements JMC{
 		Score tmp = new Score(this.getName());
 		tmp.setTempo(bpm);
 		tmp.add(p);
-		Write.midi(tmp, "CreatedMelodies/"+this.getName());
+		Write.midi(tmp, "CreatedMelodies/"+folder+"/"+this.getName());
 			
 	}
 	
-	public void trackToScaleMidi(int type) {
+	public void trackToScaleMidi(int type, String folder) {
 		//type = 1 Major, =2 Minor
 		ArrayList<Note> noteArray = new ArrayList<Note>();
 		for (NoteHerremans nh: getNoteSequence()) {
@@ -139,7 +139,7 @@ public class Track implements JMC{
 		Score tmp = new Score(this.getName());
 		tmp.setTempo(bpm);
 		tmp.add(p);
-		Write.midi(tmp, "CreatedMelodiesInC+/"+this.getName());
+		Write.midi(tmp, "CreatedMelodiesInC+/"+folder+"/"+this.getName());
 	}
 	
 	private void fixPause () {

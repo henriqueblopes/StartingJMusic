@@ -12,7 +12,7 @@ figure(1)
 %  'Value',1,'Callback',{@slider_callback1,panel2});
 
 zipfs = load('zipfFitnessErrorFitmutateMelodicAndRhythmTrigramM_2016_5_5_17_34_54.mid.dat');
-zipfs2 = load('zipfFitnessErrorFitmutateNormalOrRankRankedMelodicAndRhythmTrigramM_2016_5_5_17_40_39.mid.dat');
+zipfs2 = load('zipfFitnessErrorFitmutateCopyingPartMusicM_2016_5_11_13_59_51.mid.dat');
 zipfsHeyJude = load('heyJudePM2016_4_22_11_16_4.dat');
 
 [z(1) z(2)] = plotZipfLines(zipfs, 1);

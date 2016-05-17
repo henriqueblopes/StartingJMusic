@@ -356,5 +356,19 @@ public class Mutation {
 		return positionTrigram;	
 	}
 	
+	public static Individual mutateAllMethods(Individual i) {
+		Random r = new Random();
+		float a = r.nextFloat();
+		if (a < 0.25)
+			mutateMelodicAndRhythmTrigram(i);
+		else if (a < 0.5)
+			mutateRankRankedMelodicAndRhythmTrigram(i);
+		else if (a < 0.75)
+			changeOneNote(i);
+		else if (a <= 1.0)
+			mutateCopyingPartMusic(i);
+		return i;
+	}
+	
 	
 }

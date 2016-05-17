@@ -231,6 +231,11 @@ public class ZipfMetrics {
 		return performZipfCalculation(cP);
 	}
 	
+	public double pitchBigramMetricCalculator (Track tr) {
+		int cP[] = countMelodicNgramFrequency(tr.getNoteSequence(), 2);
+		return performZipfCalculation(cP);
+	}
+	
 		
 	private ArrayList<NoteForCount> convertCountPitchDistance (Track tr) {
 		ArrayList<NoteForCount> nfcs = new ArrayList<NoteForCount>();

@@ -23,7 +23,7 @@ public class Individual {
 		//r.setSeed(0);
 		r.setSeed(System.currentTimeMillis());
 		this.musicLengthBars = musicLenghtNotes;
-		this.generationType = generationType;
+		this.setGenerationType(generationType);
 		Date d = new Date(System.currentTimeMillis());
 		track = new Track("M_"+(d.getYear()+1900)+"_"+(d.getMonth()+1)+"_"+d.getDate()+"_"+d.getHours()+"_"+d.getMinutes()+"_"+d.getSeconds()+".mid");
 		fitness = 0;
@@ -41,9 +41,9 @@ public class Individual {
 	public Individual(Track track, String generationType) {
 		r = new Random();
 		r.setSeed(0);
-		this.generationType = generationType;
+		this.setGenerationType(generationType);
 		//r.setSeed(System.currentTimeMillis());
-		if (this.generationType.equals(Constants.NOTE))
+		if (this.getGenerationType().equals(Constants.NOTE))
 			this.musicLengthBars = track.getNoteSequence().size();
 		else
 			this.musicLengthBars = track.getBarNumber();
@@ -67,6 +67,14 @@ public class Individual {
 		this.fitness = fitness;
 	}
 	
+	public String getGenerationType() {
+		return generationType;
+	}
+
+	public void setGenerationType(String generationType) {
+		this.generationType = generationType;
+	}
+
 	public ZipfMetrics getZipfMetrics() {
 		return zipfMetrics;
 	}
@@ -76,9 +84,9 @@ public class Individual {
 	}
 
 	public void createTrack() {
-		if (generationType.equals(Constants.BAR))
+		if (getGenerationType().equals(Constants.BAR))
 			createTrackBar();
-		else if (generationType.equals(Constants.NOTE))
+		else if (getGenerationType().equals(Constants.NOTE))
 			createTrackNote();
 		setZipfMetrics(new ZipfMetrics(getTrack()));
 	}
