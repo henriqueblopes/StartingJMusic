@@ -57,6 +57,13 @@ public class ZipfMetrics {
 		rhythms = convertRhythm(t.getNoteSequence());
 		setRhythmIntervals(convertRhythmInterval(rhythms));
 	}
+	
+	private void initZipfVector (Track t) {
+		chromaticPitchs = convertMod12Pitch(t.getNoteSequence());
+		setMelodicIntervals(convertMelodicInterval(t.getNoteSequence()));
+		rhythms = convertRhythm(t.getNoteSequence());
+		setRhythmIntervals(convertRhythmInterval(rhythms));
+	}
 		
 	public double fractalMetricCalculator(Track tr, int noteMin, String zipfLaw) {
 		HashMap<Integer, ArrayList<Double>> angMap = new HashMap<Integer, ArrayList<Double>>();
@@ -82,6 +89,7 @@ public class ZipfMetrics {
 		if(heightTree ==3)
 			return 0.0;
 			//return -0.5;
+		initZipfVector(tr);
 		return sr.getSlope();
 	}
 	
@@ -110,7 +118,9 @@ public class ZipfMetrics {
 					t1half.setNoteSequence(new ArrayList<NoteHerremans>(tr.getNoteSequence().subList(0, tr.getNoteSequence().size()/2)));
 					Track t2half = new Track("aux");
 					t2half.setNoteSequence(new ArrayList<NoteHerremans>(tr.getNoteSequence().subList(tr.getNoteSequence().size()/2, tr.getNoteSequence().size())));
+					initZipfVector(t1half);
 					recursiveFractalMetricCalculator(t1half, angMap, mapPosition+1, method, maxHeight);
+					initZipfVector(t2half);
 					recursiveFractalMetricCalculator(t2half, angMap, mapPosition+1, method, maxHeight);
 				}
 			} catch (IllegalAccessException | IllegalArgumentException

@@ -36,8 +36,8 @@ public final class Main implements JMC {
 		//evalRandomInvididual();
 		//testPerformanceFitness();
 		//evalInputMusic();
-		//runGenetic(0, 5);
-		runGenetic(1, 5);
+		runGenetic(0, 4);
+		runGenetic(1, 4);
 	}
 	
 	public static void printMusic(Individual i1) {
@@ -102,14 +102,17 @@ public final class Main implements JMC {
 	
 	public static void runGenetic (int inScale, int nReplics) {
 		for (int i = 0; i< nReplics; i++) {
-			if (inScale ==1)
+			if (inScale ==1) {
 				Constants.RANGE_MAX_PITCH = Constants.RANGE_MIN_PITCH + 3*7;
+				Fitness.scale = 1;
+			}
+				
 			String selection = Constants.BINARY_TOURNAMENT;
 			String crossOver = Constants.CROSS_OVER_NOTE;
-			String fitness = Constants.ZIPF_FITNESS;
-			String mutation = MutationConstants.MUTATE_ALL_METHODS;
+			String fitness = Constants.ZIPF_FITNESS_ERROR_FIT;
+			String mutation = MutationConstants.MUTATE_ALL_METHODS_COPYING_LATER;
 			GeneticAlgorithm ga = new GeneticAlgorithm(200, 1500, 0.90, 0.3, 120, selection, crossOver, fitness, mutation, Constants.NOTE);
-			ga.runGenetic();
+			ga.runGeneticPaired();
 			ga.exportConvergence();
 			Individual max = ga.returnMaxIndividual();
 			max.getTrack().setName(fitness+mutation+max.getTrack().getName());

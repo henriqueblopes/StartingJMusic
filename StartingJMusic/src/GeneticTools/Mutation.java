@@ -365,10 +365,23 @@ public class Mutation {
 			mutateRankRankedMelodicAndRhythmTrigram(i);
 		else if (a < 0.75)
 			changeOneNote(i);
-		else if (a <= 1.0)
+		else 
 			mutateCopyingPartMusic(i);
 		return i;
 	}
+	
+	public static Individual mutateAllMethodsCopyingLater(Individual i) {
+		Random r = new Random();
+		int a = r.nextInt(3);
+		if (a == 0)
+			mutateMelodicAndRhythmTrigram(i);
+		else if (a == 1)
+			mutateRankRankedMelodicAndRhythmTrigram(i);
+		else 
+			changeOneNote(i);
+		return i;
+	}
+	
 	
 	
 }

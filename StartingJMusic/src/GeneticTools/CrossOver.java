@@ -93,8 +93,8 @@ public abstract class CrossOver {
 	public static Individual[] crossOverNote(Individual i1, Individual i2, int musicLength) {
 		Random r = new Random();
 		int a = r.nextInt(musicLength-1)+1;
-		ArrayList<NoteHerremans> nh1 = new ArrayList();
-		ArrayList<NoteHerremans> nh2 = new ArrayList();
+		ArrayList<NoteHerremans> nh1 = new ArrayList<NoteHerremans>();
+		ArrayList<NoteHerremans> nh2 = new ArrayList<NoteHerremans>();
 		crossIndividual(i1, i2, a, a, nh1, nh2);
 		Individual[] crossedOver = new Individual[2];
 		

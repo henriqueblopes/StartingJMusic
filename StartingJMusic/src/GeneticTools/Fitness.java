@@ -13,8 +13,16 @@ import NoteEnconding.Track;
 
 public abstract class Fitness {
 	
+	public static int scale = 0;
+	
 	public static void fitness (Individual i, String method) {
-		//i.setFitness(zipfFitness(i.getTrack()));
+		Individual iAux = new Individual(i.getMusicLenthBars(), i.getGenerationType());
+		if (scale == 1 ) {
+			iAux.setTrack(Fitness.copyNoteSequence(i.getTrack()));
+			i.getTrack().trackToCMajor();
+			
+		}
+		
 		try {
 			Class[] classes = new Class[] {Individual.class};
 			Method m = Fitness.class.getMethod(method, classes);			
@@ -32,6 +40,9 @@ public abstract class Fitness {
 		} catch (NoSuchMethodException | SecurityException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		if (scale == 1 ) {
+			i.setTrack(iAux.getTrack());
 		}
 	}
 	public static double zipfFitness (Individual i){
@@ -91,51 +102,51 @@ public abstract class Fitness {
 		return fitness;
 	}
 	
-	private static double zipfFractalFitness (Individual i) {
+	public static double zipfFractalFitness (Individual i) {
 		double lambida = 0.5;
 		double a = 0.0; 
 		double fitness = 0.0;
 		
-		a = i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), 4, ZipfLawConstants.CHROMATICPITCH_METRIC_CALCULATOR);
+		a = i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), Constants.Constants.FRACTAL_MIN_NOTES, ZipfLawConstants.CHROMATICPITCH_METRIC_CALCULATOR);
 		fitness += Math.pow(Math.E,(-Math.pow((-1.0-a),2.0)/lambida));
 		
-		a = i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), 4, ZipfLawConstants.CHROMATICPITCHDISTANCE_METRIC_CALCULATOR);
+		a = i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), Constants.Constants.FRACTAL_MIN_NOTES, ZipfLawConstants.CHROMATICPITCHDISTANCE_METRIC_CALCULATOR);
 		fitness += Math.pow(Math.E,(-Math.pow((-1.0-a),2.0)/lambida));
 		
-		a = i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), 4, ZipfLawConstants.CHROMATICPITCHDURATION_METRIC_CALCULATOR);
+		a = i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), Constants.Constants.FRACTAL_MIN_NOTES, ZipfLawConstants.CHROMATICPITCHDURATION_METRIC_CALCULATOR);
 		fitness += Math.pow(Math.E,(-Math.pow((-1.0-a),2.0)/lambida));
 		
-		a = i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), 4, ZipfLawConstants.DURATION_METRIC_CALCULATOR);
+		a = i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), Constants.Constants.FRACTAL_MIN_NOTES, ZipfLawConstants.DURATION_METRIC_CALCULATOR);
 		fitness += Math.pow(Math.E,(-Math.pow((-1.0-a),2.0)/lambida));
 		
-		a = i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), 4, ZipfLawConstants.MELODICBIGAM_CALCULATOR);
+		a = i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), Constants.Constants.FRACTAL_MIN_NOTES, ZipfLawConstants.MELODICBIGAM_CALCULATOR);
 		fitness += Math.pow(Math.E,(-Math.pow((-1.0-a),2.0)/lambida));
 		
-		a = i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), 4, ZipfLawConstants.MELODICINTERVAL_METRIC_CALCULATOR);
+		a = i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), Constants.Constants.FRACTAL_MIN_NOTES, ZipfLawConstants.MELODICINTERVAL_METRIC_CALCULATOR);
 		fitness += Math.pow(Math.E,(-Math.pow((-1.0-a),2.0)/lambida));
 		
-		a = i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), 4, ZipfLawConstants.MELODICTRIGAM_METRIC_CALCULATOR);
+		a = i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), Constants.Constants.FRACTAL_MIN_NOTES, ZipfLawConstants.MELODICTRIGAM_METRIC_CALCULATOR);
 		fitness += Math.pow(Math.E,(-Math.pow((-1.0-a),2.0)/lambida));
 		
-		a = i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), 4, ZipfLawConstants.PITCH_METRIC_CALCULATOR);
+		a = i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), Constants.Constants.FRACTAL_MIN_NOTES, ZipfLawConstants.PITCH_METRIC_CALCULATOR);
 		fitness += Math.pow(Math.E,(-Math.pow((-1.0-a),2.0)/lambida));
 		
-		a = i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), 4, ZipfLawConstants.PITCHDISTANCE_METRIC_CALCULATOR);
+		a = i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), Constants.Constants.FRACTAL_MIN_NOTES, ZipfLawConstants.PITCHDISTANCE_METRIC_CALCULATOR);
 		fitness += Math.pow(Math.E,(-Math.pow((-1.0-a),2.0)/lambida));
 		
-		a = i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), 4, ZipfLawConstants.PITCHDURATION_METRIC_CALCULATOR);
+		a = i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), Constants.Constants.FRACTAL_MIN_NOTES, ZipfLawConstants.PITCHDURATION_METRIC_CALCULATOR);
 		fitness += Math.pow(Math.E,(-Math.pow((-1.0-a),2.0)/lambida));
 		
-		a = i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), 4, ZipfLawConstants.RHYTHM_METRIC_CALCULATOR);
+		a = i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), Constants.Constants.FRACTAL_MIN_NOTES, ZipfLawConstants.RHYTHM_METRIC_CALCULATOR);
 		fitness += Math.pow(Math.E,(-Math.pow((-1.0-a),2.0)/lambida));
 		
-		a = i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), 4, ZipfLawConstants.RHYTHMBIGAM_METRIC_CALCULATOR);
+		a = i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), Constants.Constants.FRACTAL_MIN_NOTES, ZipfLawConstants.RHYTHMBIGAM_METRIC_CALCULATOR);
 		fitness += Math.pow(Math.E,(-Math.pow((-1.0-a),2.0)/lambida));
 		
-		a = i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), 4, ZipfLawConstants.RHYTHMINTERVAL_METRIC_CALCULATOR);
+		a = i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), Constants.Constants.FRACTAL_MIN_NOTES, ZipfLawConstants.RHYTHMINTERVAL_METRIC_CALCULATOR);
 		fitness += Math.pow(Math.E,(-Math.pow((-1.0-a),2.0)/lambida));
 		
-		a = i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), 4, ZipfLawConstants.RHYTHMTRIGAM_METRIC_CALCULATOR);
+		a = i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), Constants.Constants.FRACTAL_MIN_NOTES, ZipfLawConstants.RHYTHMTRIGAM_METRIC_CALCULATOR);
 		fitness += Math.pow(Math.E,(-Math.pow((-1.0-a),2.0)/lambida));
 		
 		return fitness;
@@ -197,6 +208,9 @@ public abstract class Fitness {
 	
 	public static double zipfFitnessRSquare (Individual i){
 		return -zipfFitnessErrorFit(i);
+	}
+	public static double zipfNormalAndFractalFitness (Individual i) {
+		return zipfFitness(i) + zipfFractalFitness(i);
 	}
 	
 }

@@ -16,6 +16,8 @@ public final class Constants {
 	public static final String  EUCLIDIAN_DISTANCE_ZIPF = "euclidianDistanceZipf";
 	public static final String  ZIPF_FITNESS_ERROR_FIT = "zipfFitnessErrorFit";
 	public static final String ZIPF_FITNESS_RSQUARE = "zipfFitnessRSquare";
+	public static final String ZIPF_NORMAL_AND_FRACTAL_FITNESS = "zipfNormalAndFractalFitness";
+	public static final String ZIPF_FRACTAL_FITNESS = "zipfFractalFitness";
 	
 	//Mutations
 	/*public static final String CHANGE_ONE_NOTE = "changeOneNote";
@@ -27,6 +29,7 @@ public final class Constants {
 	public static int RANGE_MAX_PITCH = 72;
 	public static final double EPSILON_DURATION = 0.005;
 	public static final double FRACTAL_PROXIMITY = 0.2;
+	public static final int FRACTAL_MIN_NOTES = 14;
 	
 	//Constantes de limitação de Duração
 	public static final int WITHOUT_NOTHING = 18;

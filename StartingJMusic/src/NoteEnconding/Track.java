@@ -120,7 +120,7 @@ public class Track implements JMC{
 		ArrayList<Note> noteArray = new ArrayList<Note>();
 		for (NoteHerremans nh: getNoteSequence()) {
 			Note n = new Note();
-			int octave = nh.getMidiPitch()/7;
+			int octave = (nh.getMidiPitch()-Constants.RANGE_MIN_PITCH)/7 + 3;
 			if(nh.getMidiPitch() == -1)
 				n.setPitch(nh.getMidiPitch());
 			else if (nh.getMidiPitch()%7 <3)
@@ -140,6 +140,19 @@ public class Track implements JMC{
 		tmp.setTempo(bpm);
 		tmp.add(p);
 		Write.midi(tmp, "CreatedMelodiesInC+/"+folder+"/"+this.getName());
+	}
+	
+	public void trackToCMajor() {
+		ArrayList<NoteHerremans> noteArray = new ArrayList<NoteHerremans>();
+		for (NoteHerremans nh: getNoteSequence()) {
+			int octave = (nh.getMidiPitch()-Constants.RANGE_MIN_PITCH)/7 + 3;
+			if(nh.getMidiPitch() == -1)
+				nh.setMidiPitch(nh.getMidiPitch());
+			else if ((nh.getMidiPitch()-Constants.RANGE_MIN_PITCH)%7 <3)
+				nh.setMidiPitch(2*((nh.getMidiPitch()-Constants.RANGE_MIN_PITCH)%7) +octave*12);
+			else if ((nh.getMidiPitch()-Constants.RANGE_MIN_PITCH)%7 < 7)
+				nh.setMidiPitch(2*((nh.getMidiPitch()-Constants.RANGE_MIN_PITCH)%7)-1 +octave*12);
+		}
 	}
 	
 	private void fixPause () {
