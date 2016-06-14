@@ -165,4 +165,13 @@ public class Track implements JMC{
 	public int getBarNumber() {
 		return getNoteSequence().get(getNoteSequence().size()-1).getMeasure();
 	}
+	
+	public static Track copyNoteSequence (Track t) {
+		Track t2 = new Track(t.getName());
+		for (NoteHerremans nh: t.getNoteSequence()) {
+			NoteHerremans nh2 = new NoteHerremans(nh);
+			t2.getNoteSequence().add(nh2);
+		}
+		return t2;
+	}
 }

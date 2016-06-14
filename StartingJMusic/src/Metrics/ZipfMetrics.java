@@ -154,7 +154,7 @@ public class ZipfMetrics {
 	//seria bom fazer mais alguns testes (fixar semente e fazer resultado na mão)
 	public double pitchDurationMetricCalculator(Track tr) {
 		Track t = new Track("aux");
-		t.setNoteSequence(Fitness.copyNoteSequence(tr).getNoteSequence());
+		t.setNoteSequence(Track.copyNoteSequence(tr).getNoteSequence());
 		int cP[] = countPitchDurationFrequency(t.getNoteSequence());
 		return performZipfCalculation(cP);
 	}
@@ -780,7 +780,7 @@ public class ZipfMetrics {
 		calcZipfString(cP);
 		
 		Track t = new Track("aux");
-		t.setNoteSequence(Fitness.copyNoteSequence(tr).getNoteSequence());
+		t.setNoteSequence(Track.copyNoteSequence(tr).getNoteSequence());
 		cP = countPitchDurationFrequency(t.getNoteSequence());
 		calcZipfString(cP);
 		

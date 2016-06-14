@@ -270,7 +270,7 @@ public class Individual {
 	}
 	
 	public Individual clone() {
-		Individual i = new Individual(Fitness.copyNoteSequence(getTrack()), this.getGenerationType());
+		Individual i = new Individual(Track.copyNoteSequence(getTrack()), this.getGenerationType());
 		i.setFitness(this.getFitness());
 		return i;
 	}

@@ -18,7 +18,7 @@ public abstract class Fitness {
 	public static void fitness (Individual i, String method) {
 		Individual iAux = new Individual(i.getMusicLenthBars(), i.getGenerationType());
 		if (scale == 1 ) {
-			iAux.setTrack(Fitness.copyNoteSequence(i.getTrack()));
+			iAux.setTrack(Track.copyNoteSequence(i.getTrack()));
 			i.getTrack().trackToCMajor();
 			
 		}
@@ -47,7 +47,7 @@ public abstract class Fitness {
 	}
 	public static double zipfFitness (Individual i){
 		
-		Track tAux = copyNoteSequence(i.getTrack());
+		Track tAux = Track.copyNoteSequence(i.getTrack());
 		if (i.getZipfMetrics() == null)
 			System.out.println("Shit!");
 		double lambida = 0.5;
@@ -151,14 +151,14 @@ public abstract class Fitness {
 		
 		return fitness;
 	}
-	public static Track copyNoteSequence (Track t) {
+	/*public static Track copyNoteSequence (Track t) {
 		Track t2 = new Track(t.getName());
 		for (NoteHerremans nh: t.getNoteSequence()) {
 			NoteHerremans nh2 = new NoteHerremans(nh);
 			t2.getNoteSequence().add(nh2);
 		}
 		return t2;
-	}
+	}*/
 	public static double euclidianDistanceZipf (Individual i) {
 		//ZipfMetrics.convertAll(i.getTrack());
 		double d[] = {-1.0413437415181142, -1.0689903240752452, -0.979938795101525, -1.1417581827340004,

@@ -37,7 +37,7 @@ public final class Main implements JMC {
 		//testPerformanceFitness();
 		//evalInputMusic();
 		//runGenetic(0, 1);
-		runGenetic(1, 2);
+		runGenetic(1, 1);
 	}
 	
 	public static void printMusic(Individual i1) {
