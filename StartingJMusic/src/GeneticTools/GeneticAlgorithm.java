@@ -167,10 +167,8 @@ public class GeneticAlgorithm {
 			while (offSpring.size() < getPopulationLength()) {
 				Random r = new Random();
 				if (r.nextFloat() < getCrossOverRate()) {
-					Individual i1 = new Individual(getMusicLengthBar(), getGenerationType());
-					i1.setTrack(Track.copyNoteSequence(Selection.selection(getPopulation(),getSelectionMethod()).getTrack()));
-					Individual i2 = new Individual(getMusicLengthBar(), getGenerationType());
-					i2.setTrack(Track.copyNoteSequence(Selection.binaryTournament(getPopulation()).getTrack()));
+					Individual i1 = Selection.selection(getPopulation(),getSelectionMethod()).clone();
+					Individual i2 = Selection.selection(getPopulation(),getSelectionMethod()).clone();
 					Individual[] ii = CrossOver.crossOver(i1, i2, getMusicLengthBar(), getCrossOverMethod()).clone();
 					Fitness.fitness(ii[0], getFitnessMethod());
 					Fitness.fitness(ii[1], getFitnessMethod());
@@ -184,7 +182,7 @@ public class GeneticAlgorithm {
 					}
 				}
 				if(r.nextFloat() < getMutationRate()) {
-					Individual i1 = new Individual(Track.copyNoteSequence(Selection.binaryTournament(getPopulation()).getTrack()), getGenerationType());
+					Individual i1 = Selection.selection(getPopulation(),getSelectionMethod()).clone();
 					Date d = new Date(System.currentTimeMillis());
 					i1.getTrack().setName("M_"+(d.getYear()+1900)+"_"+(d.getMonth()+1)+"_"+d.getDate()+"_"+d.getHours()+"_"+d.getMinutes()+"_"+d.getSeconds()+".mid");
 					if (offSpring.size() < getPopulationLength()) {
@@ -216,21 +214,12 @@ public class GeneticAlgorithm {
 				if(getMutationMethod() == MutationConstants.MUTATE_ALL_METHODS_COPYING_LATER)
 					setMutationMethod(MutationConstants.MUTATE_ALL_METHODS);
 			
-			//Individual maxI = new Individual(Fitness.copyNoteSequence(maxIAux.getTrack()), getGenerationType());
-			//Fitness.fitness(maxI, getFitnessMethod(), this.bestI);
-			
-			//maxI = new Individual(Fitness.copyNoteSequence(maxIAux.getTrack()), getGenerationType());
-			//maxI.setFitness(maxIAux.getFitness());
-			//getConvergence().add(bestI.clone());
-			//offSpring.add(maxI);
 			Collections.shuffle(getPopulation());
 			Random r = new Random();
 			for (int j = 0; j < getPopulationLength(); j = j + 2) {
 				if (r.nextFloat() < getCrossOverRate()) {
-					Individual i1 = new Individual(getMusicLengthBar(), getGenerationType());
-					i1.setTrack(Track.copyNoteSequence(getPopulation().get(j).getTrack()));
-					Individual i2 = new Individual(getMusicLengthBar(), getGenerationType());
-					i2.setTrack(Track.copyNoteSequence(getPopulation().get(j+1).getTrack()));
+					Individual i1 = Selection.selection(getPopulation(),getSelectionMethod()).clone();
+					Individual i2 = Selection.selection(getPopulation(),getSelectionMethod()).clone();
 					Individual[] ii = CrossOver.crossOver(i1, i2, getMusicLengthBar(), getCrossOverMethod()).clone();
 					Fitness.fitness(ii[0], getFitnessMethod());
 					Fitness.fitness(ii[1], getFitnessMethod());
