@@ -36,10 +36,12 @@ public final class Constants {
 	public static final int WITHOUT_TRIPLETS = 11;
 	public static final int WITHOUT_TRIPLETS_DOUBLEDOTTED = 10;
 	public static final int WITHOUT_TRIPLETS_DOUBLEDOTTED_DOTTED = 6;
+	public static final int WITHOUT_TRIPLETS_DOUBLEDOTTED_DOTTED_FUSE = 5;
 	
 	//Constantes de geração musical
 	public static final String BAR = "bar";
 	public static final String NOTE = "note";
+	public static final String BAR_REMAINING_DURATION = "createTrackBarRemainingDuration";
 	
 	
 	

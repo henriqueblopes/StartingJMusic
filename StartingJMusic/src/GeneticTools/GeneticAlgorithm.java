@@ -22,8 +22,9 @@ public class GeneticAlgorithm {
 	private String crossOverMethod;
 	private String fitnessMethod;
 	private String mutationMethod;
-	private ArrayList<Individual> convergence;
+	private ArrayList<Double> convergence;
 	private String generationType;
+	//private Individual bestI;
 	
 	public GeneticAlgorithm (int populationLength, int generations,
 			double crossOverRate, double mutationRate, int musicLengthBar, String selectionMethod,
@@ -32,7 +33,7 @@ public class GeneticAlgorithm {
 			
 		
 		this.setPopulation(new ArrayList<Individual>());
-		this.setConvergence(new ArrayList<Individual>());
+		this.setConvergence(new ArrayList<Double>());
 		this.setPopulationLength(populationLength);
 		this.setGenerations(generations);
 		this.setCrossOverRate(crossOverRate);
@@ -43,6 +44,7 @@ public class GeneticAlgorithm {
 		this.setFitnessMethod(fitnessMethod);
 		this.setMutationMethod(mutationMethod);
 		this.setGenerationType(generationType);
+		//this.bestI = new Individual(generationType);
 		
 	}
 
@@ -121,11 +123,11 @@ public class GeneticAlgorithm {
 		this.mutationMethod = mutationMethod;
 	}
 
-	private ArrayList<Individual> getConvergence() {
+	private ArrayList<Double> getConvergence() {
 		return convergence;
 	}
 
-	private void setConvergence(ArrayList<Individual> convergence) {
+	private void setConvergence(ArrayList<Double> convergence) {
 		this.convergence = convergence;
 	}
 
@@ -151,7 +153,7 @@ public class GeneticAlgorithm {
 		initializeRandomPopulation();
 		ArrayList<Individual> offSpring = new ArrayList<Individual>();
 		for (int i = 0;i < getGenerations(); i++) {
-			getConvergence().add(returnMaxIndividual());
+			//getConvergence().add(returnMaxIndividual());
 			if(i%(getGenerations()/5) == 0)
 				System.out.println("Geração  " + i);
 			
@@ -194,7 +196,7 @@ public class GeneticAlgorithm {
 			setPopulation(offSpring);
 			offSpring = new ArrayList<Individual>();
 		}
-		getConvergence().add(returnMaxIndividual());
+		//getConvergence().add(returnMaxIndividual());
 		return getPopulation();
 	}
 	
@@ -210,14 +212,14 @@ public class GeneticAlgorithm {
 				if(getMutationMethod() == MutationConstants.MUTATE_ALL_METHODS_COPYING_LATER)
 					setMutationMethod(MutationConstants.MUTATE_ALL_METHODS);
 			
-			Individual maxI = new Individual(Fitness.copyNoteSequence(maxIAux.getTrack()), getGenerationType());
-			Fitness.fitness(maxI, getFitnessMethod());
+			//Individual maxI = new Individual(Fitness.copyNoteSequence(maxIAux.getTrack()), getGenerationType());
+			//Fitness.fitness(maxI, getFitnessMethod(), this.bestI);
 			
-			maxI = new Individual(Fitness.copyNoteSequence(maxIAux.getTrack()), getGenerationType());
-			maxI.setFitness(maxIAux.getFitness());
+			//maxI = new Individual(Fitness.copyNoteSequence(maxIAux.getTrack()), getGenerationType());
+			//maxI.setFitness(maxIAux.getFitness());
 			
-			getConvergence().add(maxI);
-			offSpring.add(maxI);
+			//getConvergence().add(bestI.clone());
+			//offSpring.add(maxI);
 			Collections.shuffle(getPopulation());
 			Random r = new Random();
 			for (int j = 0; j < getPopulationLength(); j = j + 2) {
@@ -241,12 +243,13 @@ public class GeneticAlgorithm {
 					Fitness.fitness(iPop, getFitnessMethod());
 				}
 			}
+			
 			while (offSpring.size() < getPopulationLength())
 				offSpring.add(Selection.binaryTournament(getPopulation()));
 			setPopulation(offSpring);
 			offSpring = new ArrayList<Individual>();
 		}
-		getConvergence().add(returnMaxIndividual());
+		//getConvergence().add(returnMaxIndividual());
 		return getPopulation();
 	}
 	
@@ -262,8 +265,8 @@ public class GeneticAlgorithm {
 	
 	public void exportConvergence () {
 		String content = "";
-		for (Individual i: getConvergence()) {
-			content += String.valueOf(i.getFitness());
+		for (Double i: getConvergence()) {
+			content += i.toString();
 			content += " ";
 		}
 		

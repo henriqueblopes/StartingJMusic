@@ -36,8 +36,8 @@ public final class Main implements JMC {
 		//evalRandomInvididual();
 		//testPerformanceFitness();
 		//evalInputMusic();
-		runGenetic(0, 4);
-		runGenetic(1, 4);
+		//runGenetic(0, 1);
+		runGenetic(1, 2);
 	}
 	
 	public static void printMusic(Individual i1) {
@@ -111,7 +111,7 @@ public final class Main implements JMC {
 			String crossOver = Constants.CROSS_OVER_NOTE;
 			String fitness = Constants.ZIPF_FITNESS_ERROR_FIT;
 			String mutation = MutationConstants.MUTATE_ALL_METHODS_COPYING_LATER;
-			GeneticAlgorithm ga = new GeneticAlgorithm(200, 1500, 0.90, 0.3, 120, selection, crossOver, fitness, mutation, Constants.NOTE);
+			GeneticAlgorithm ga = new GeneticAlgorithm(200, 1000, 0.90, 0.3, 30, selection, crossOver, fitness, mutation, Constants.NOTE);
 			ga.runGeneticPaired();
 			ga.exportConvergence();
 			Individual max = ga.returnMaxIndividual();
@@ -158,15 +158,16 @@ public final class Main implements JMC {
 	}
 	
 	public static void evalRandomInvididual () {
-		String fit = Constants.ZIPF_FITNESS_ERROR_FIT;
-		Individual i1 = new Individual(10, Constants.NOTE);
-		
+		String fit = Constants.ZIPF_FITNESS;
+		Individual i1 = new Individual(30, Constants.BAR_REMAINING_DURATION);
 		i1.createTrack();
+		i1.getTrack().setName("justRandomTest.mid");
 		i1.getZipfMetrics().setZipfCountMethod(fit);
 		i1.getZipfMetrics().pitchBigramMetricCalculator(i1.getTrack());
 		Fitness.fitness(i1, fit);
 		printCoefFitness(i1);
 		//i1.getTrack().trackToScaleMidi(0, fitness+mutation);
+		i1.getTrack().trackToMidi("");
 		i1.getZipfMetrics().writeZipfData(i1.getTrack());
 		
 	}

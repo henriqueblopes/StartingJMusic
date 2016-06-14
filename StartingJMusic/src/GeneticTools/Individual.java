@@ -51,6 +51,12 @@ public class Individual {
 		fitness = 0;
 		setZipfMetrics(new ZipfMetrics(getTrack()));
 	}
+	
+	public Individual(String generationType) {
+		this.setFitness(Double.NEGATIVE_INFINITY);
+		this.setGenerationType(generationType);
+	}
+
 	public int getMusicLenthBars () {
 		return this.musicLengthBars;
 	}
@@ -88,6 +94,8 @@ public class Individual {
 			createTrackBar();
 		else if (getGenerationType().equals(Constants.NOTE))
 			createTrackNote();
+		else 
+			createTrackBarRemainingDuration();
 		setZipfMetrics(new ZipfMetrics(getTrack()));
 	}
 	
@@ -154,13 +162,39 @@ public class Individual {
 		}
 	}
 	
+	private void createTrackBarRemainingDuration () {
+		int bar = 1;
+		double barTempo = 0.0;
+		double barSize = 4.0;
+	
+		while (bar <= getMusicLenthBars()) {
+			NoteHerremans nh = createRandomNote();
+			while (barSize-barTempo < nh.getDuration() - Constants.EPSILON_DURATION)
+				nh = createRandomNote();
+			nh.setMeasure(bar);
+			getTrack().getNoteSequence().add(nh);
+			barTempo += nh.getDuration();
+			/*if(nh.getDuration() == Durations.THIRTYSECOND_NOTE || nh.getDuration() ==
+					Durations.DOTTED_SIXTEENTH_NOTE) {
+				NoteHerremans nh2 = new NoteHerremans(randomPitch(), Durations.THIRTYSECOND_NOTE);
+				nh2.setMeasure(bar);
+				getTrack().getNoteSequence().add(nh2);
+				barTempo += nh2.getDuration();
+			}*/
+			if(barTempo > barSize-Constants.EPSILON_DURATION && barTempo < barSize+Constants.EPSILON_DURATION) {
+				barTempo = 0.0;
+				bar++;
+			}
+		}
+	}
+	
 	private void createTrackNote () {
 		for (int i = 0; i < musicLengthBars; i++)
 			this.getTrack().getNoteSequence().add(createRandomNote());
 	}
 	public double randomDuration() {
 		double rDuration = 0.0;
-		int a = r.nextInt(Constants.WITHOUT_TRIPLETS_DOUBLEDOTTED);
+		int a = r.nextInt(Constants.WITHOUT_TRIPLETS_DOUBLEDOTTED_DOTTED_FUSE);
 		switch (a) {
 			case 0:
 				rDuration =  Durations.SEMIBREVE;
@@ -233,6 +267,12 @@ public class Individual {
 			pitch = -1;
 		return pitch;
 
+	}
+	
+	public Individual clone() {
+		Individual i = new Individual(Fitness.copyNoteSequence(getTrack()), this.getGenerationType());
+		i.setFitness(this.getFitness());
+		return i;
 	}
 	
 }
