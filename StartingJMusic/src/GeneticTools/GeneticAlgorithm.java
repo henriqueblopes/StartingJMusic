@@ -169,7 +169,7 @@ public class GeneticAlgorithm {
 				if (r.nextFloat() < getCrossOverRate()) {
 					Individual i1 = Selection.selection(getPopulation(),getSelectionMethod()).clone();
 					Individual i2 = Selection.selection(getPopulation(),getSelectionMethod()).clone();
-					Individual[] ii = CrossOver.crossOver(i1, i2, getMusicLengthBar(), getCrossOverMethod()).clone();
+					Individual[] ii = CrossOver.crossOver(i1, i2, getMusicLengthBar(), getCrossOverMethod());
 					Fitness.fitness(ii[0], getFitnessMethod());
 					Fitness.fitness(ii[1], getFitnessMethod());
 					if (offSpring.size() < getPopulationLength() -1) {
@@ -220,7 +220,7 @@ public class GeneticAlgorithm {
 				if (r.nextFloat() < getCrossOverRate()) {
 					Individual i1 = Selection.selection(getPopulation(),getSelectionMethod()).clone();
 					Individual i2 = Selection.selection(getPopulation(),getSelectionMethod()).clone();
-					Individual[] ii = CrossOver.crossOver(i1, i2, getMusicLengthBar(), getCrossOverMethod()).clone();
+					Individual[] ii = CrossOver.crossOver(i1, i2, getMusicLengthBar(), getCrossOverMethod());
 					Fitness.fitness(ii[0], getFitnessMethod());
 					Fitness.fitness(ii[1], getFitnessMethod());
 					getPopulation().add(ii[0]);

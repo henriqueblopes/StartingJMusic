@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import org.apache.commons.math3.analysis.function.Pow;
 
 import Constants.ZipfLawConstants;
+import Metrics.FuxMetrics;
 import NoteEnconding.NoteHerremans;
 import NoteEnconding.Track;
 
@@ -211,6 +212,14 @@ public abstract class Fitness {
 	}
 	public static double zipfNormalAndFractalFitness (Individual i) {
 		return zipfFitness(i) + zipfFractalFitness(i);
+	}
+	
+	public static double fuxFitness (Individual i) {
+		double fit = -FuxMetrics.fux1EightNotes(i.getTrack());
+		fit -= FuxMetrics.fux2OneClimax(i.getTrack());
+		fit -= FuxMetrics.fux3ClimaxOnStrongBeat(i.getTrack());
+		
+		return fit;
 	}
 	
 }

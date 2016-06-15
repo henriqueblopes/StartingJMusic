@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 
 import Constants.Constants;
+import Constants.FitnessConstants;
 import Constants.MutationConstants;
 import Constants.ZipfLawConstants;
 import GeneticTools.Fitness;
@@ -36,8 +37,8 @@ public final class Main implements JMC {
 		//evalRandomInvididual();
 		//testPerformanceFitness();
 		//evalInputMusic();
-		//runGenetic(0, 1);
-		runGenetic(1, 1);
+		runGenetic(0, 1);
+		//runGenetic(1, 1);
 	}
 	
 	public static void printMusic(Individual i1) {
@@ -108,10 +109,11 @@ public final class Main implements JMC {
 			}
 				
 			String selection = Constants.BINARY_TOURNAMENT;
-			String crossOver = Constants.CROSS_OVER_NOTE;
-			String fitness = Constants.ZIPF_FITNESS_ERROR_FIT;
+			String crossOver = Constants.CROSS_OVER_BAR;
+			String fitness = FitnessConstants.FUX_FITNESS;
 			String mutation = MutationConstants.MUTATE_ALL_METHODS_COPYING_LATER;
-			GeneticAlgorithm ga = new GeneticAlgorithm(200, 1000, 0.90, 0.3, 30, selection, crossOver, fitness, mutation, Constants.NOTE);
+			String generationType = Constants.BAR_REMAINING_DURATION;
+			GeneticAlgorithm ga = new GeneticAlgorithm(200, 1000, 0.90, 0.3, 30, selection, crossOver, fitness, mutation, generationType);
 			ga.runGeneticPaired();
 			ga.exportConvergence();
 			Individual max = ga.returnMaxIndividual();
@@ -132,7 +134,7 @@ public final class Main implements JMC {
 	}
 	
 	public static void evalInputMusic () {
-		String fitness = Constants.ZIPF_FITNESS;
+		String fitness = FitnessConstants.ZIPF_FITNESS;
 		Score tmp = new Score("tmp.mid");
 		//Read.midi(tmp, "midis/megadeth-TornadoOfSouls-Solo.mid");
 		//Read.midi(tmp, "TrechosMidis/bethoven-quintasinfonia1.mid");
@@ -152,13 +154,13 @@ public final class Main implements JMC {
 		for (int i = 0; i< 10000; i++) {
 			Individual i1 = new Individual(40, Constants.NOTE);
 			i1.createTrack();
-			Fitness.fitness(i1, Constants.ZIPF_FITNESS);
+			Fitness.fitness(i1, FitnessConstants.ZIPF_FITNESS);
 		}
 		System.out.println("Tempo de 10000 avaliações: " + (System.currentTimeMillis() - time));
 	}
 	
 	public static void evalRandomInvididual () {
-		String fit = Constants.ZIPF_FITNESS;
+		String fit = FitnessConstants.ZIPF_FITNESS;
 		Individual i1 = new Individual(30, Constants.BAR_REMAINING_DURATION);
 		i1.createTrack();
 		i1.getTrack().setName("justRandomTest.mid");

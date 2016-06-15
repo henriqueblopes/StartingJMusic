@@ -1,5 +1,6 @@
 package Metrics;
 import Constants.Constants;
+import Constants.FitnessConstants;
 import Constants.ZipfLawConstants;
 import GeneticTools.Fitness;
 import GeneticTools.Individual;
@@ -48,7 +49,7 @@ public class ZipfMetrics {
 	private ArrayList<NoteForCount>  countedRhythmTrigrams;
 	
 	private String zipfData;
-	private static String zipfCountMethod = Constants.ZIPF_FITNESS;
+	private static String zipfCountMethod = FitnessConstants.ZIPF_FITNESS;
 	
 	public ZipfMetrics (Track t) {
 		zipfData = "";
@@ -301,7 +302,7 @@ public class ZipfMetrics {
 		
 	}
 	
-	private ArrayList<NoteHerremans> convertMelodicInterval (ArrayList<NoteHerremans> nh) {
+	public ArrayList<NoteHerremans> convertMelodicInterval (ArrayList<NoteHerremans> nh) {
 		ArrayList<NoteHerremans> returnNh = new ArrayList<NoteHerremans>();
 		Iterator<NoteHerremans> i = nh.iterator();
 		NoteHerremans a = i.next();
@@ -547,11 +548,11 @@ public class ZipfMetrics {
 		return cP;
 	}
 	private double performZipfCalculation (int cP[]) {
-		if (this.getZipfCountMethod().equals(Constants.ZIPF_FITNESS))
+		if (this.getZipfCountMethod().equals(FitnessConstants.ZIPF_FITNESS))
 			return calculateLinearRegression(cP);
-		else if (this.getZipfCountMethod().equals(Constants.ZIPF_FITNESS_ERROR_FIT))
+		else if (this.getZipfCountMethod().equals(FitnessConstants.ZIPF_FITNESS_ERROR_FIT))
 			return calculateErrorFit(cP);
-		else if (this.getZipfCountMethod().equals(Constants.ZIPF_FITNESS_RSQUARE))
+		else if (this.getZipfCountMethod().equals(FitnessConstants.ZIPF_FITNESS_RSQUARE))
 			return calculateLinearRegression(cP);
 		
 		return calculateLinearRegression(cP);
@@ -580,7 +581,7 @@ public class ZipfMetrics {
 		double a = sr.getMeanSquareError();
 		a = sr.getR();
 		a = sr.getSlopeStdErr();
-		if (getZipfCountMethod().equals(Constants.ZIPF_FITNESS_RSQUARE))
+		if (getZipfCountMethod().equals(FitnessConstants.ZIPF_FITNESS_RSQUARE))
 			return sr.getRSquare();
 		else
 			return sr.getSlope();

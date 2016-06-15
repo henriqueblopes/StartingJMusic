@@ -11,13 +11,7 @@ public final class Constants {
 	//Selections
 	public static final String BINARY_TOURNAMENT = "binaryTournament";
 	
-	//Fitness
-	public static final String ZIPF_FITNESS = "zipfFitness";
-	public static final String  EUCLIDIAN_DISTANCE_ZIPF = "euclidianDistanceZipf";
-	public static final String  ZIPF_FITNESS_ERROR_FIT = "zipfFitnessErrorFit";
-	public static final String ZIPF_FITNESS_RSQUARE = "zipfFitnessRSquare";
-	public static final String ZIPF_NORMAL_AND_FRACTAL_FITNESS = "zipfNormalAndFractalFitness";
-	public static final String ZIPF_FRACTAL_FITNESS = "zipfFractalFitness";
+	
 	
 	//Mutations
 	/*public static final String CHANGE_ONE_NOTE = "changeOneNote";
@@ -43,6 +37,8 @@ public final class Constants {
 	public static final String NOTE = "note";
 	public static final String BAR_REMAINING_DURATION = "createTrackBarRemainingDuration";
 	
+	//FuxConstants
+	public static final int FUX_LENGTH_BARS = 16;
 	
 	
 
