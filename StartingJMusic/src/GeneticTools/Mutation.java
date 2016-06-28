@@ -245,6 +245,57 @@ public class Mutation {
 		return i;
 	}
 	
+	//Em reforma, Não use. Desculpe-nos o transtorno.
+	public static Individual mutateCopyingPartMusicBar (Individual i) {
+		double barsizeTempos = 4.0;
+		Random r = new Random();
+		double sizeMutation = r.nextDouble()*(MutationConstants.M_COPYING_SIZE_MAX-MutationConstants.M_COPYING_SIZE_MIN)+MutationConstants.M_COPYING_SIZE_MIN;
+		int sizeMutationTrunc = (int) Math.ceil(sizeMutation*i.getTrack().getNoteSequence().size());
+		int startIndex = r.nextInt(i.getTrack().getNoteSequence().size()-sizeMutationTrunc);
+		ArrayList<NoteHerremans> partToCopy = new ArrayList<NoteHerremans>(i.getTrack().getNoteSequence().subList(startIndex, startIndex + sizeMutationTrunc));
+		
+		int flag = 0;
+		int startingBar = 0;
+		int nWriteBars = i.getTrack().getNoteSequence().get(startIndex+sizeMutationTrunc).getMeasure() 
+				- i.getTrack().getNoteSequence().get(startIndex).getMeasure();
+				
+		while (flag == 0) {
+			startingBar = r.nextInt(i.getTrack().getNoteSequence().size()-sizeMutationTrunc);
+			if (startingBar + nWriteBars  
+					<= i.getTrack().getNoteSequence().get(startIndex).getMeasure())
+				flag = 1;
+			if (startingBar >= i.getTrack().getNoteSequence().get(startIndex+sizeMutationTrunc).getMeasure())
+				flag = 1;
+		}
+		
+		double finalBeat = 0.0;
+		for (NoteHerremans nh: partToCopy) {
+			if (nh.getMeasure() != startingBar)
+				break;
+			finalBeat += nh.getDuration();
+		}
+		
+		for (NoteHerremans nh: i.getTrack().getNoteSequence()) {
+			double sizeBarCopying = 0.0;
+			if (nh.getMeasure() == startingBar) {
+				//sizeBarCopying += nh.getDuration();
+				if (sizeBarCopying > barsizeTempos - finalBeat - Constants.EPSILON_DURATION) {
+					NoteHerremans nh2 = i.createRandomNote();
+					while (barsizeTempos - finalBeat - Constants.EPSILON_DURATION< nh.getDuration() - Constants.EPSILON_DURATION)
+						nh2 = i.createRandomNote();
+				}
+			}
+		}
+		int it = 0;
+		for (NoteHerremans nh: partToCopy) {
+			i.getTrack().getNoteSequence().get(it).setMidiPitch(nh.getMidiPitch());
+			i.getTrack().getNoteSequence().get(it).setDuration(nh.getDuration());
+			it++;
+		}
+		
+		return i;
+	}
+	
 	public static ArrayList<NoteForCount> countedRankedEventToRemove (ArrayList<NoteForCount> nfcsEvent) {
 		ArrayList<NoteForCount> nfcsRanked = new ArrayList<NoteForCount>();
 		

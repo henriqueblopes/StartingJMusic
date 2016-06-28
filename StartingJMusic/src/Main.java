@@ -36,8 +36,9 @@ public final class Main implements JMC {
 		
 		//evalRandomInvididual();
 		//testPerformanceFitness();
+		pcaInput();
 		//evalInputMusic();
-		runGenetic(0, 1);
+		//runGenetic(0, 1);
 		//runGenetic(1, 1);
 	}
 	
@@ -134,19 +135,36 @@ public final class Main implements JMC {
 	}
 	
 	public static void evalInputMusic () {
-		String fitness = FitnessConstants.ZIPF_FITNESS;
+		String fitness = FitnessConstants.ZIPF_FRACTAL_FITNESS_PRINT;
 		Score tmp = new Score("tmp.mid");
-		//Read.midi(tmp, "midis/megadeth-TornadoOfSouls-Solo.mid");
-		//Read.midi(tmp, "TrechosMidis/bethoven-quintasinfonia1.mid");
-		//Read.midi(tmp, "TrechosMidis/JohnsonEric-CliffsofDover.mid");
-		Read.midi(tmp, "TrechosMidis/beattles-heyjude.mid");
+		Read.midi(tmp, "TrechosMidis/mc-Bach,JohannSebastian-ConcertoInAMinor.mid");
+		//Read.midi(tmp, "TrechosMidis/mc-BachJohannSebastian-SuitenFurVioloncelloN1.mid");
+		//Read.midi(tmp, "TrechosMidis/mc-mc-Beethoven-FurElise.mid");
+		//Read.midi(tmp, "TrechosMidis/mc-bethoven-quintasinfonia1.mid");
+		//Read.midi(tmp, "TrechosMidis/mc-VivaldiAntonio-LaPrimavera(Allegro1).mid");
+		//Read.midi(tmp, "TrechosMidis/ra-beattles-heyjude.mid");
+		//Read.midi(tmp, "TrechosMidis/ra-DeepPurple-SmokeOnTheWater.mid");
+		//Read.midi(tmp, "TrechosMidis/ra-LedZeppelin-GoodTimesBadTimes.mid");
+		//Read.midi(tmp, "TrechosMidis/ra-Queen-IWantItAll.mid");
+		//Read.midi(tmp, "TrechosMidis/ra-Rainbow-ManontheSilverMountain.mid");
+		//Read.midi(tmp, "TrechosMidis/sg-JohnsonEric-CliffsofDover.mid");
+		//Read.midi(tmp, "TrechosMidis/sg-megadeth-TornadoOfSouls-Solo.mid");
+		//Read.midi(tmp, "TrechosMidis/sg-tunnel_vision_ver2.mid");
+		//Read.midi(tmp, "TrechosMidis/sg-waldir_azevedo_brasileirinho.mid");
+		//Read.midi(tmp, "TrechosMidis/sg-wormanityIntoTheBattlefield.mid");
+		//Read.midi(tmp, "TrechosMidis/vm-BarkAtTheMoon.mid");
+		//Read.midi(tmp, "TrechosMidis/vm-Blind Guardian-Nightfall.mid");
+		//Read.midi(tmp, "TrechosMidis/vm-CowboysFromHell.mid");
+		//Read.midi(tmp, "TrechosMidis/vm-Metallica-MasterOfPuppets.mid");
+		//Read.midi(tmp, "TrechosMidis/vm-the_evil_that_men_do.mid");
+		
 		Track t = new Track(tmp.getPart(0).getPhrase(0), "Track1");
 		Individual i1 = new Individual(t, Constants.NOTE);
 		i1.getZipfMetrics().setZipfCountMethod(fitness);
 		Fitness.fitness(i1, fitness);
-		System.out.println("Fitness: " + i1.getFitness()) ;
-		printCoefFitness(i1);
-		//i1.getZipfMetrics().writeZipfData(i1.getTrack());
+		//System.out.println("Fitness: " + i1.getFitness()) ;
+		//printCoefFitness(i1);
+		i1.getZipfMetrics().writeZipfData(i1.getTrack());
 	}
 	
 	public static void testPerformanceFitness () {
@@ -174,4 +192,44 @@ public final class Main implements JMC {
 		
 	}
 	
+	public static void pcaInput () {
+		String[] input = { "TrechosMidis/mc-Bach,JohannSebastian-ConcertoInAMinor.mid",
+			"TrechosMidis/mc-BachJohannSebastian-SuitenFurVioloncelloN1.mid",
+			"TrechosMidis/mc-Beethoven-FurElise.mid",
+			"TrechosMidis/mc-bethoven-quintasinfonia1.mid",
+			"TrechosMidis/mc-VivaldiAntonio-LaPrimavera(Allegro1).mid",
+			"TrechosMidis/ra-beattles-heyjude.mid",
+			"TrechosMidis/ra-DeepPurple-SmokeOnTheWater.mid",
+			"TrechosMidis/ra-LedZeppelin-GoodTimesBadTimes.mid",
+			"TrechosMidis/ra-Queen-IWantItAll.mid",
+			"TrechosMidis/ra-Rainbow-ManontheSilverMountain.mid",
+			"TrechosMidis/sg-JohnsonEric-CliffsofDover.mid",
+			"TrechosMidis/sg-megadeth-TornadoOfSouls-Solo.mid",
+			"TrechosMidis/sg-tunnel_vision_ver2.mid",
+			"TrechosMidis/sg-waldir_azevedo_brasileirinho.mid",
+			"TrechosMidis/sg-wormanityIntoTheBattlefield.mid",
+			"TrechosMidis/vm-BarkAtTheMoon.mid",
+			"TrechosMidis/vm-Blind Guardian-Nightfall.mid",
+			"TrechosMidis/vm-CowboysFromHell.mid",
+			"TrechosMidis/vm-Metallica-MasterOfPuppets.mid",
+			"TrechosMidis/vm-the_evil_that_men_do.mid"
+			};
+		
+		Score[] tmp = new Score[20];
+		
+		String fitness = FitnessConstants.ZIPF_FRACTAL_FITNESS_PRINT;
+		for (int i = 0; i< input.length; i++) {
+			tmp[i] = new Score("tmp.mid");
+			Read.midi(tmp[i], input[i]);
+			
+		}
+		for (int i = 0; i< input.length; i++) {
+			Track t = new Track(tmp[i].getPart(0).getPhrase(0), "Track1");
+			Individual i1 = new Individual(t, Constants.NOTE);
+			i1.getZipfMetrics().setZipfCountMethod(fitness);
+			Fitness.fitness(i1, fitness);
+			System.out.println();
+		}
+
+	}
 }

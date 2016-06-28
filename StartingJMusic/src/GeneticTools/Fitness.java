@@ -222,4 +222,46 @@ public abstract class Fitness {
 		return fit;
 	}
 	
+	public static double zipfFractalFitnessPrint(Individual i) {
+		Track tAux = Track.copyNoteSequence(i.getTrack());
+		if (i.getZipfMetrics() == null)
+			System.out.println("Shit!");
+		double lambida = 0.5;
+		double a = 0.0; 
+		
+		double fitness = 0.0;
+		//Double.valueOf(a).
+		System.out.print(Math.floor(Math.pow(Math.E,(-Math.pow((-1.0-i.getZipfMetrics().pitchMetricCalculator(i.getTrack())),2.0)/lambida)) * 100) / 100+ " ");
+		System.out.print(Math.floor(Math.pow(Math.E,(-Math.pow((-1.0-i.getZipfMetrics().pitchDistanceMetricCalculator(i.getTrack())),2.0)/lambida)) * 100) / 100+ " ");
+		System.out.print(Math.floor(Math.pow(Math.E,(-Math.pow((-1.0-i.getZipfMetrics().pitchDurationMetricCalculator(i.getTrack())),2.0)/lambida)) * 100) / 100+ " ");
+		System.out.print(Math.floor(Math.pow(Math.E,(-Math.pow((-1.0-i.getZipfMetrics().chromaticPitchDistanceMetricCalculator(i.getTrack())),2.0)/lambida)) * 100) / 100+ " ");
+		System.out.print(Math.floor(Math.pow(Math.E,(-Math.pow((-1.0-i.getZipfMetrics().chromaticPitchDurationMetricCalculator(i.getTrack())),2.0)/lambida)) * 100) / 100+ " ");
+		System.out.print(Math.floor(Math.pow(Math.E,(-Math.pow((-1.0-i.getZipfMetrics().chromaticPitchMetricCalculator(i.getTrack())),2.0)/lambida)) * 100) / 100+ " ");
+		System.out.print(Math.floor(Math.pow(Math.E,(-Math.pow((-1.0-i.getZipfMetrics().melodicIntervalMetricCalculator(i.getTrack())),2.0)/lambida)) * 100) / 100+ " ");
+		System.out.print(Math.floor(Math.pow(Math.E,(-Math.pow((-1.0-i.getZipfMetrics().melodicBigramMetricCalculator(i.getTrack())),2.0)/lambida)) * 100) / 100+ " ");
+		System.out.print(Math.floor(Math.pow(Math.E,(-Math.pow((-1.0-i.getZipfMetrics().melodicTrigramMetricCalculator(i.getTrack())),2.0)/lambida)) * 100) / 100+ " ");
+		System.out.print(Math.floor(Math.pow(Math.E,(-Math.pow((-1.0-i.getZipfMetrics().durationMetricCalculator(i.getTrack())),2.0)/lambida)) * 100) / 100+ " ");
+		System.out.print(Math.floor(Math.pow(Math.E,(-Math.pow((-1.0-i.getZipfMetrics().rhythmMetricCalculator(i.getTrack())),2.0)/lambida)) * 100) / 100+ " ");
+		System.out.print(Math.floor(Math.pow(Math.E,(-Math.pow((-1.0-i.getZipfMetrics().rhythmIntervalMetricCalculator(i.getTrack())),2.0)/lambida)) * 100) / 100+ " ");
+		System.out.print(Math.floor(Math.pow(Math.E,(-Math.pow((-1.0-i.getZipfMetrics().rhythmBigramMetricCalculator(i.getTrack())),2.0)/lambida)) * 100) / 100+ " ");
+		System.out.print(Math.floor(Math.pow(Math.E,(-Math.pow((-1.0-i.getZipfMetrics().rhythmTrigramMetricCalculator(i.getTrack())),2.0)/lambida)) * 100) / 100+ " ");
+		//System.out.print(i.getZipfMetrics().pitchBigramMetricCalculator(i.getTrack())+ " ");
+		System.out.print(Math.floor(Math.pow(Math.E,(-Math.pow((-1.0-i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), Constants.Constants.FRACTAL_MIN_NOTES, ZipfLawConstants.CHROMATICPITCH_METRIC_CALCULATOR)),2.0)/lambida)) * 100) / 100+ " ");
+		System.out.print(Math.floor(Math.pow(Math.E,(-Math.pow((-1.0-i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), Constants.Constants.FRACTAL_MIN_NOTES, ZipfLawConstants.CHROMATICPITCHDISTANCE_METRIC_CALCULATOR)),2.0)/lambida)) * 100) / 100+ " ");
+		System.out.print(Math.floor(Math.pow(Math.E,(-Math.pow((-1.0-i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), Constants.Constants.FRACTAL_MIN_NOTES, ZipfLawConstants.CHROMATICPITCHDURATION_METRIC_CALCULATOR)),2.0)/lambida)) * 100) / 100+ " ");
+		System.out.print(Math.floor(Math.pow(Math.E,(-Math.pow((-1.0-i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), Constants.Constants.FRACTAL_MIN_NOTES, ZipfLawConstants.DURATION_METRIC_CALCULATOR)),2.0)/lambida)) * 100) / 100+ " ");
+		System.out.print(Math.floor(Math.pow(Math.E,(-Math.pow((-1.0-i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), Constants.Constants.FRACTAL_MIN_NOTES, ZipfLawConstants.MELODICBIGAM_CALCULATOR)),2.0)/lambida)) * 100) / 100+ " ");
+		System.out.print(Math.floor(Math.pow(Math.E,(-Math.pow((-1.0-i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), Constants.Constants.FRACTAL_MIN_NOTES, ZipfLawConstants.MELODICINTERVAL_METRIC_CALCULATOR)),2.0)/lambida)) * 100) / 100+ " ");
+		System.out.print(Math.floor(Math.pow(Math.E,(-Math.pow((-1.0-i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), Constants.Constants.FRACTAL_MIN_NOTES, ZipfLawConstants.MELODICTRIGAM_METRIC_CALCULATOR)),2.0)/lambida)) * 100) / 100+ " ");
+		System.out.print(Math.floor(Math.pow(Math.E,(-Math.pow((-1.0-i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), Constants.Constants.FRACTAL_MIN_NOTES, ZipfLawConstants.PITCH_METRIC_CALCULATOR)),2.0)/lambida)) * 100) / 100+ " ");
+		System.out.print(Math.floor(Math.pow(Math.E,(-Math.pow((-1.0-i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), Constants.Constants.FRACTAL_MIN_NOTES, ZipfLawConstants.PITCHDISTANCE_METRIC_CALCULATOR)),2.0)/lambida)) * 100) / 100+ " ");
+		System.out.print(Math.floor(Math.pow(Math.E,(-Math.pow((-1.0-i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), Constants.Constants.FRACTAL_MIN_NOTES, ZipfLawConstants.PITCHDURATION_METRIC_CALCULATOR)),2.0)/lambida)) * 100) / 100+ " ");
+		System.out.print(Math.floor(Math.pow(Math.E,(-Math.pow((-1.0-i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), Constants.Constants.FRACTAL_MIN_NOTES, ZipfLawConstants.RHYTHM_METRIC_CALCULATOR)),2.0)/lambida)) * 100) / 100+ " ");
+		System.out.print(Math.floor(Math.pow(Math.E,(-Math.pow((-1.0-i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), Constants.Constants.FRACTAL_MIN_NOTES, ZipfLawConstants.RHYTHMBIGAM_METRIC_CALCULATOR)),2.0)/lambida)) * 100) / 100+ " ");
+		System.out.print(Math.floor(Math.pow(Math.E,(-Math.pow((-1.0-i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), Constants.Constants.FRACTAL_MIN_NOTES, ZipfLawConstants.RHYTHMINTERVAL_METRIC_CALCULATOR)),2.0)/lambida)) * 100) / 100+ " ");
+		System.out.print(Math.floor(Math.pow(Math.E,(-Math.pow((-1.0-i.getZipfMetrics().fractalMetricCalculator(i.getTrack(), Constants.Constants.FRACTAL_MIN_NOTES, ZipfLawConstants.RHYTHMTRIGAM_METRIC_CALCULATOR)),2.0)/lambida)) * 100) / 100+ " ");
+		
+		return 0.0;
+	}
+	
 }

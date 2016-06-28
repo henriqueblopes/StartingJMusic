@@ -8,5 +8,6 @@ public final class FitnessConstants {
 	public static final String ZIPF_FITNESS_RSQUARE = "zipfFitnessRSquare";
 	public static final String ZIPF_NORMAL_AND_FRACTAL_FITNESS = "zipfNormalAndFractalFitness";
 	public static final String ZIPF_FRACTAL_FITNESS = "zipfFractalFitness";
+	public static final String ZIPF_FRACTAL_FITNESS_PRINT = "zipfFractalFitnessPrint";
 	public static final String FUX_FITNESS = "fuxFitness";
 }

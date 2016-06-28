@@ -253,7 +253,7 @@ public class Individual {
 		}
 		return rDuration;
 	}
-	private NoteHerremans createRandomNote() {
+	public NoteHerremans createRandomNote() {
 		int pitch = r.nextInt(Constants.RANGE_MAX_PITCH-Constants.RANGE_MIN_PITCH+1)+Constants.RANGE_MIN_PITCH;
 		if (pitch == Constants.RANGE_MAX_PITCH+1)
 			pitch = -1;
