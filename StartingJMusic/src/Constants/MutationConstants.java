@@ -20,6 +20,8 @@ public  final class MutationConstants {
 	public static final String MUTATE_ALL_METHODS = "mutateAllMethods";
 	public static final String MUTATE_ALL_METHODS_COPYING_LATER = "mutateAllMethodsCopyingLater";
 	
+	public static final String  MUTATE_COPYING_PART_MUSIC_BAR = "mutateCopyingPartMusicBar";
+	
 	public static final double M_COPYING_SIZE_MIN = 0.05;
 	public static final double M_COPYING_SIZE_MAX = 0.10;
 }

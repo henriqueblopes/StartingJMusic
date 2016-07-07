@@ -174,4 +174,28 @@ public class Track implements JMC{
 		}
 		return t2;
 	}
+	
+	public static ArrayList<NoteHerremans> copyNoteSequence (ArrayList<NoteHerremans> t) {
+		ArrayList<NoteHerremans> t2 = new ArrayList<NoteHerremans>();
+		for (NoteHerremans nh: t) {
+			NoteHerremans nh2 = new NoteHerremans(nh);
+			t2.add(nh2);
+		}
+		return t2;
+	}
+	
+	public void rebuildMeasure() {
+		double barTempo = 4.0;
+		double actualBarTempo = 0.0;
+		int actualMeasure = 1;
+		for (NoteHerremans nh: getNoteSequence()) {
+			nh.setMeasure(actualMeasure);
+			actualBarTempo += nh.getDuration();
+			if (actualBarTempo > barTempo - Constants.EPSILON_DURATION) {
+				actualBarTempo = 0.0;
+				actualMeasure++;
+			}
+				
+		}
+	}
 }

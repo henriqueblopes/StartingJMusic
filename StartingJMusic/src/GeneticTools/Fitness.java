@@ -218,6 +218,19 @@ public abstract class Fitness {
 		double fit = -FuxMetrics.fux1EightNotes(i.getTrack());
 		fit -= FuxMetrics.fux2OneClimax(i.getTrack());
 		fit -= FuxMetrics.fux3ClimaxOnStrongBeat(i.getTrack());
+		fit -= FuxMetrics.fux4HorizontalConsonantIntervals(i.getTrack());
+		fit -= FuxMetrics.fux5ConjunctStepwise(i.getTrack());
+		fit -= FuxMetrics.fux6LargeLeapFollStepwise(i.getTrack());
+		fit -= FuxMetrics.fux7LargeLeapFollStepwise(i.getTrack());
+		fit -= FuxMetrics.fux8ClimaxConsonantTonic(i.getTrack());
+		fit -= FuxMetrics.fux9MaxTwoConsecutiveLeaps(i.getTrack());
+		fit -= FuxMetrics.fux10MaxTwoLargeLeaps(i.getTrack());
+		fit -= FuxMetrics.fux11LongStepwise(i.getTrack());
+		fit -= FuxMetrics.fux12ChangedDirections(i.getTrack());
+		fit -= FuxMetrics.fux13TonicEndNote(i.getTrack());
+		fit -= FuxMetrics.fux14PenultimateLeadingTone(i.getTrack());
+		//fit -= FuxMetrics.fux15ConsonantMotionInterval(i.getTrack());
+		//fit -= FuxMetrics.fux16LargeMotionInterval(i.getTrack());
 		
 		return fit;
 	}

@@ -21,7 +21,7 @@ public final class Constants {
 	public static final int N_DURATIONS = 18;
 	public static final int RANGE_MIN_PITCH = 36;
 	public static int RANGE_MAX_PITCH = 72;
-	public static final double EPSILON_DURATION = 0.005;
+	public static final double EPSILON_DURATION = 0.01;
 	public static final double FRACTAL_PROXIMITY = 0.2;
 	public static final int FRACTAL_MIN_NOTES = 14;
 	

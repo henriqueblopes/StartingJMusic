@@ -9,12 +9,14 @@ import java.util.Random;
 
 import org.apache.commons.math3.analysis.function.Constant;
 
+import weka.clusterers.forOPTICSAndDBScan.Utils.EpsilonRange_ListElement;
 import Comparators.NoteForCountComparatorDesc;
 import Constants.Constants;
 import Constants.MutationConstants;
 import Metrics.NoteForCount;
 import Metrics.NoteForCountComparator;
 import NoteEnconding.NoteHerremans;
+import NoteEnconding.Track;
 
 public class Mutation {
 	public static Individual mutation(Individual i, String method) {
@@ -247,6 +249,7 @@ public class Mutation {
 	
 	//Em reforma, Não use. Desculpe-nos o transtorno.
 	public static Individual mutateCopyingPartMusicBar (Individual i) {
+		//double b = printTotalDuration(i.getTrack().getNoteSequence());
 		double barsizeTempos = 4.0;
 		Random r = new Random();
 		double sizeMutation = r.nextDouble()*(MutationConstants.M_COPYING_SIZE_MAX-MutationConstants.M_COPYING_SIZE_MIN)+MutationConstants.M_COPYING_SIZE_MIN;
@@ -256,44 +259,119 @@ public class Mutation {
 		
 		int flag = 0;
 		int startingBar = 0;
-		int nWriteBars = i.getTrack().getNoteSequence().get(startIndex+sizeMutationTrunc).getMeasure() 
-				- i.getTrack().getNoteSequence().get(startIndex).getMeasure();
+		int nWriteBars = i.getTrack().getNoteSequence().get(startIndex+sizeMutationTrunc-1).getMeasure() 
+				- i.getTrack().getNoteSequence().get(startIndex).getMeasure()+1;
 				
 		while (flag == 0) {
-			startingBar = r.nextInt(i.getTrack().getNoteSequence().size()-sizeMutationTrunc);
+			startingBar = r.nextInt(i.getTrack().getBarNumber()-nWriteBars)+1;
 			if (startingBar + nWriteBars  
 					<= i.getTrack().getNoteSequence().get(startIndex).getMeasure())
 				flag = 1;
-			if (startingBar >= i.getTrack().getNoteSequence().get(startIndex+sizeMutationTrunc).getMeasure())
+			if (startingBar >= i.getTrack().getNoteSequence().get(startIndex+sizeMutationTrunc-1).getMeasure()+1)
 				flag = 1;
 		}
 		
+		ArrayList<NoteHerremans> beforePartBar = new ArrayList<NoteHerremans>();
+		for (NoteHerremans nh: i.getTrack().getNoteSequence())
+			if(nh.getMeasure() == startingBar) {
+				beforePartBar = new ArrayList<NoteHerremans>(i.getTrack().getNoteSequence().subList(0,
+						i.getTrack().getNoteSequence().indexOf(nh)));
+				break;
+			}
+		
+		ArrayList<NoteHerremans> afterPartBar = new ArrayList<NoteHerremans>();
+		for (NoteHerremans nh: i.getTrack().getNoteSequence())
+			if(nh.getMeasure() == startingBar+nWriteBars) {
+				afterPartBar = new ArrayList<NoteHerremans>(i.getTrack().getNoteSequence().subList(i.getTrack().getNoteSequence().indexOf(nh),
+						i.getTrack().getNoteSequence().size()));
+				break;
+			}
+		
 		double finalBeat = 0.0;
 		for (NoteHerremans nh: partToCopy) {
-			if (nh.getMeasure() != startingBar)
+			if (nh.getMeasure() != partToCopy.get(0).getMeasure())
 				break;
 			finalBeat += nh.getDuration();
 		}
 		
-		for (NoteHerremans nh: i.getTrack().getNoteSequence()) {
-			double sizeBarCopying = 0.0;
-			if (nh.getMeasure() == startingBar) {
-				//sizeBarCopying += nh.getDuration();
-				if (sizeBarCopying > barsizeTempos - finalBeat - Constants.EPSILON_DURATION) {
-					NoteHerremans nh2 = i.createRandomNote();
-					while (barsizeTempos - finalBeat - Constants.EPSILON_DURATION< nh.getDuration() - Constants.EPSILON_DURATION)
-						nh2 = i.createRandomNote();
-				}
-			}
-		}
-		int it = 0;
-		for (NoteHerremans nh: partToCopy) {
-			i.getTrack().getNoteSequence().get(it).setMidiPitch(nh.getMidiPitch());
-			i.getTrack().getNoteSequence().get(it).setDuration(nh.getDuration());
-			it++;
+		ArrayList<NoteHerremans> beforeCopy = new ArrayList<NoteHerremans>();
+		while (finalBeat < 4.0 - Constants.EPSILON_DURATION) {
+			NoteHerremans nh = i.createRandomNote();
+			while (finalBeat + nh.getDuration() > 4.0 + Constants.EPSILON_DURATION) 
+				nh = i.createRandomNote();
+			finalBeat += nh.getDuration();
+			beforeCopy.add(nh);
+			if (finalBeat > 4.0 - Constants.EPSILON_DURATION)
+				break;			
 		}
 		
+		finalBeat = 0.0;
+		for (NoteHerremans nh: partToCopy) {
+			if (nh.getMeasure() == partToCopy.get(partToCopy.size()-1).getMeasure())
+				finalBeat += nh.getDuration();
+		}
+		
+		ArrayList<NoteHerremans> afterCopy = new ArrayList<NoteHerremans>();
+		while (finalBeat < 4.0 - Constants.EPSILON_DURATION) {
+			NoteHerremans nh = i.createRandomNote();
+			while (finalBeat + nh.getDuration() > 4.0 + Constants.EPSILON_DURATION) 
+				nh = i.createRandomNote();
+			finalBeat += nh.getDuration();
+			afterCopy.add(nh);
+			if (finalBeat > 4.0 - Constants.EPSILON_DURATION)
+				break;			
+		}
+		
+		ArrayList<NoteHerremans> mutated = new ArrayList<NoteHerremans>();
+		mutated.addAll(beforePartBar);
+		mutated.addAll(beforeCopy);
+		mutated.addAll(Track.copyNoteSequence(partToCopy));
+		if (nWriteBars > 1)
+			//System.out.println("opsss");
+			mutated.addAll(afterCopy);
+		mutated.addAll(afterPartBar);
+		/*printTotalDuration(beforePartBar);
+		printTotalDuration(beforeCopy);
+		printTotalDuration(partToCopy);
+		printTotalDuration(afterCopy);
+		printTotalDuration(afterPartBar);*/
+		
+		//System.out.println();
+		//printTotalDuration(mutated);
+		//System.out.println();
+		//printWrongBar(mutated);
+		
+		
+		//double c = printTotalDuration(mutated);
+		//if (c != b )
+			//System.out.println();
+		
+		i.getTrack().setNoteSequence(mutated);
+		i.getTrack().rebuildMeasure();
+		//System.out.println();
 		return i;
+	}
+	private static void printWrongBar (ArrayList<NoteHerremans> i) {
+		double count = 0.0;
+		int bar = 1;
+		for (NoteHerremans nh: i)
+			if (nh.getMeasure() == bar) {
+				count += nh.getDuration();
+				if(count > 4.0 + Constants.EPSILON_DURATION)
+					System.out.println("WrongBar");
+			}
+	}
+	
+	
+	private static double printTotalDuration(ArrayList<NoteHerremans> i) {
+		double a = 0.0;
+		for (NoteHerremans nh: i)
+			a += nh.getDuration();
+		if (a/4 != 30.0) {
+			//System.out.print(a + " ");
+		}
+		System.out.print(a + " ");
+		return a;
 	}
 	
 	public static ArrayList<NoteForCount> countedRankedEventToRemove (ArrayList<NoteForCount> nfcsEvent) {

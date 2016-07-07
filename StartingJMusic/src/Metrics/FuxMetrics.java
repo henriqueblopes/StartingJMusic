@@ -1,6 +1,7 @@
 package Metrics;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 
 import NoteEnconding.NoteHerremans;
 import NoteEnconding.Track;
@@ -36,16 +37,24 @@ public abstract class FuxMetrics {
 		climaxInNeighbouringTones = 0;
 		highestPitch = discoverHighestPitch(track.getNoteSequence());
 		climaxes = discoverClimaxes(track.getNoteSequence(), highestPitch);
+		ArrayList<NoteHerremans> toRemove = new ArrayList<NoteHerremans>();
+		try {
 		for (NoteHerremans nh: climaxes) {
 			int indexOfnh = track.getNoteSequence().indexOf(nh);
 			if (indexOfnh+2 < track.getNoteSequence().size()-1) {
 				if (track.getNoteSequence().get(indexOfnh+2).getMidiPitch() == nh.getMidiPitch())
 					if (notLeftByStepwise(nh, track.getNoteSequence()) == 0 ) {
 						climaxInNeighbouringTones++;
-						climaxes.remove(climaxes.indexOf(nh)+1);
+						toRemove.add(track.getNoteSequence().get(indexOfnh+2));
+						//climaxes.remove(climaxes.indexOf(nh)+1);
 					}
 			}
 				
+		}
+		climaxes.removeAll(toRemove);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
 		}
 		return ((double) (climaxes.size()-1))/((double) track.getBarNumber());
 	}
