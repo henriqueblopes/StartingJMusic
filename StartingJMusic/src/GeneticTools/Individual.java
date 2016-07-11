@@ -53,6 +53,7 @@ public class Individual {
 	}
 	
 	public Individual(String generationType) {
+		r = new Random();
 		this.setFitness(Double.NEGATIVE_INFINITY);
 		this.setGenerationType(generationType);
 	}

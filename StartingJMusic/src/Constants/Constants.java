@@ -24,6 +24,7 @@ public final class Constants {
 	public static final double EPSILON_DURATION = 0.01;
 	public static final double FRACTAL_PROXIMITY = 0.2;
 	public static final int FRACTAL_MIN_NOTES = 14;
+	public static final double BAR_TEMPO = 4.0;
 	
 	//Constantes de limitação de Duração
 	public static final int WITHOUT_NOTHING = 18;

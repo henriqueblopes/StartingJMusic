@@ -19,6 +19,9 @@ import NoteEnconding.NoteHerremans;
 import NoteEnconding.Track;
 
 public class Mutation {
+	
+	public static Individual iAux = new Individual("");
+	
 	public static Individual mutation(Individual i, String method) {
 		try {
 			Class[] classes = new Class[] {Individual.class};
@@ -38,6 +41,44 @@ public class Mutation {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public static Individual changeOneNoteBar (Individual i) {
+		int n = i.getTrack().getBarNumber();
+
+		Random r = new Random();
+		int a = r.nextInt(i.getMusicLenthBars())+1;
+		NoteHerremans changed = new NoteHerremans(0, 0.0);
+		changed.setMeasure(a);
+		
+		ArrayList<NoteHerremans> bar = pickCurrentBar(i.getTrack().getNoteSequence(), changed);
+		i.getTrack().rebuildMeasure();
+		
+		ArrayList<NoteHerremans> barCopied = Track.copyNoteSequence(bar);
+		changed = barCopied.get(r.nextInt(bar.size()));
+		
+		changed.setDuration(i.randomDuration());
+		changed.setMidiPitch(i.randomPitch());
+		
+		/*if (n != i.getTrack().getBarNumber())
+			System.out.println("pick" + n + " " + i.getTrack().getBarNumber());*/
+		if(bar.size() == 0)
+			System.out.println("What???");
+		ArrayList<NoteHerremans> fixedNotes = new ArrayList<NoteHerremans>();
+		fixedNotes.add(changed);
+		fixBarDurationforMutation(barCopied, fixedNotes, Constants.BAR_TEMPO);
+		
+		/*n = i.getTrack().getBarNumber();
+		i.getTrack().rebuildMeasure();
+		if (n != i.getTrack().getBarNumber())
+			System.out.println("fix" + n + " " + i.getTrack().getBarNumber());
+		n = i.getTrack().getBarNumber();*/
+		switchBar(changed.getMeasure(), i.getTrack().getNoteSequence(), barCopied);
+		i.getTrack().rebuildMeasure();
+		if (n != i.getTrack().getBarNumber())
+			System.out.println("switch" + n + " " + i.getTrack().getBarNumber());
+		return i;
+		
 	}
 	
 	public static Individual changeOneNote(Individual i) {
@@ -72,6 +113,8 @@ public class Mutation {
 		}
 		return i;
 	}
+	
+	
 	
 	public static Individual mutateMelodicTrigram (Individual i) {
 		double targetSlope = -1.0;
@@ -509,6 +552,93 @@ public class Mutation {
 		else 
 			changeOneNote(i);
 		return i;
+	}
+	
+	private static ArrayList<NoteHerremans> pickCurrentBar (ArrayList<NoteHerremans> nhs, NoteHerremans nh) {
+		ArrayList<NoteHerremans> currentBar = new ArrayList<NoteHerremans>();
+		int initIndex = 0;
+		int finalIndex = nhs.size();
+		for (NoteHerremans nhAux: nhs) {
+			if (nhAux.getMeasure() == nh.getMeasure()) {
+				initIndex = nhs.indexOf(nhAux);
+				break;
+			} 
+		}
+		currentBar = new ArrayList<NoteHerremans>(nhs.subList(initIndex, finalIndex));
+		for (NoteHerremans nhAux: currentBar) {
+			if (nhAux.getMeasure() != nh.getMeasure()) {
+				currentBar = new ArrayList<NoteHerremans>(currentBar.subList(0, currentBar.indexOf(nhAux)));
+				break;
+			} 
+		}
+		return currentBar;
+	}
+	
+	private static ArrayList<NoteHerremans> fixBarDurationforMutation (ArrayList<NoteHerremans> bar, ArrayList<NoteHerremans> fixedNotes, double barTempo) {
+		double barDuration = 0.0;
+		for (NoteHerremans nh: bar) {
+			barDuration += nh.getDuration();
+		}
+		if(bar.size() == 0)
+			System.out.println("What???");
+		if (barDuration <= barTempo - Constants.EPSILON_DURATION)
+			completeBarForMutation(bar, barDuration, bar.get(0).getMeasure());
+		else if (barDuration >= barTempo + Constants.EPSILON_DURATION)
+			reduceBarForMutation(bar, barDuration, fixedNotes);
+		return bar;
+	}
+
+	private static void reduceBarForMutation(ArrayList<NoteHerremans> bar, double barDuration, ArrayList<NoteHerremans> fixedNotes) {
+		Random r = new Random();
+		while (barDuration >= Constants.BAR_TEMPO + Constants.EPSILON_DURATION) {
+			int a = r.nextInt(bar.size());
+			if (!fixedNotes.contains(bar.get(a))) {
+				barDuration -= bar.get(a).getDuration();
+				bar.remove(a);
+			}
+		}
+		completeBarForMutation(bar, barDuration, fixedNotes.get(0).getMeasure());
+		
+	}
+
+	private static void completeBarForMutation(ArrayList<NoteHerremans> bar, double barDuration, int barNumber) {
+		while (barDuration <= Constants.BAR_TEMPO -Constants.EPSILON_DURATION) {
+			NoteHerremans nh = iAux.createRandomNote();;
+			while (Constants.BAR_TEMPO - barDuration < nh.getDuration() - Constants.EPSILON_DURATION)
+				nh = iAux.createRandomNote();
+			nh.setMeasure(barNumber);
+			bar.add(nh);
+			barDuration += nh.getDuration();
+		}
+		
+	}
+	
+	private static ArrayList<NoteHerremans>  switchBar (int barNumber, ArrayList<NoteHerremans> nhs, ArrayList<NoteHerremans> bar) {
+		ArrayList<NoteHerremans> beforePart = new ArrayList<NoteHerremans>();
+		ArrayList<NoteHerremans> afterPart = new ArrayList<NoteHerremans>();
+		int initIndex = 0;
+		int finalIndex = nhs.size()-1;
+		for (NoteHerremans nhAux: nhs) {
+			if (nhAux.getMeasure() == bar.get(0).getMeasure()) {
+				initIndex = nhs.indexOf(nhAux);
+				break;
+			} 
+		}
+		beforePart = new ArrayList<NoteHerremans>(nhs.subList(initIndex, nhs.size()-1));
+		for (NoteHerremans nhAux: beforePart) {
+			if (nhAux.getMeasure() != barNumber) {
+				afterPart = new ArrayList<NoteHerremans>(beforePart.subList(beforePart.indexOf(nhAux), beforePart.size()-1));
+				break;
+			} 
+		}
+		
+		beforePart = new ArrayList<NoteHerremans>(nhs.subList(0, initIndex));
+		
+		ArrayList<NoteHerremans> newTrack = new ArrayList<NoteHerremans>();
+		newTrack.addAll(beforePart);
+		newTrack.addAll(bar);
+		newTrack.addAll(afterPart);
+		return newTrack;
 	}
 	
 	
