@@ -59,24 +59,14 @@ public class Mutation {
 		
 		changed.setDuration(i.randomDuration());
 		changed.setMidiPitch(i.randomPitch());
-		
-		/*if (n != i.getTrack().getBarNumber())
-			System.out.println("pick" + n + " " + i.getTrack().getBarNumber());*/
-		if(bar.size() == 0)
-			System.out.println("What???");
+
 		ArrayList<NoteHerremans> fixedNotes = new ArrayList<NoteHerremans>();
 		fixedNotes.add(changed);
 		fixBarDurationforMutation(barCopied, fixedNotes, Constants.BAR_TEMPO);
 		
-		/*n = i.getTrack().getBarNumber();
-		i.getTrack().rebuildMeasure();
-		if (n != i.getTrack().getBarNumber())
-			System.out.println("fix" + n + " " + i.getTrack().getBarNumber());
-		n = i.getTrack().getBarNumber();*/
 		switchBar(changed.getMeasure(), i.getTrack().getNoteSequence(), barCopied);
 		i.getTrack().rebuildMeasure();
-		if (n != i.getTrack().getBarNumber())
-			System.out.println("switch" + n + " " + i.getTrack().getBarNumber());
+		
 		return i;
 		
 	}

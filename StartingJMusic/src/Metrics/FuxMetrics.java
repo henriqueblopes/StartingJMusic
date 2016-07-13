@@ -30,7 +30,10 @@ public abstract class FuxMetrics {
 				}
 			}
 		}
-		return ((double) inStep8th)/(2*count8th);
+		if (count8th > 0)
+			return ((double) inStep8th)/(2*count8th);
+		else
+			return 0.0;
 	}
 	
 	public static double fux2OneClimax (Track track) {
@@ -83,22 +86,23 @@ public abstract class FuxMetrics {
 		int nLeaps = 0;
 		for (NoteHerremans nh: intervals)
 			nLeaps += isLeap(nh.getMidiPitch());
-		L = track.getBarNumber()/Constants.Constants.FUX_LENGTH_BARS;
+		L = ((double)track.getBarNumber())/Constants.Constants.FUX_LENGTH_BARS;
 		if (nLeaps < 2*L)
 			return nLeaps/(track.getBarNumber()-1-(4*L));
 		else if (nLeaps <= 4*L)
 			return 0;
 		else 
-			return (nLeaps - (4*L))/(track.getBarNumber()-1-(4*L));
+			return (nLeaps - (4*L))/(track.getNoteSequence().size()-1-(4*L));
 	}
 	
 	public static double fux6LargeLeapFollStepwise (Track track) {
 		int nLLnotFollStep = 0;
 		nLargeLeaps = 0;
-		for (NoteHerremans nh: intervals.subList(0, intervals.size()-2)) {
+		for (NoteHerremans nh: intervals.subList(0, intervals.size()-1)) {
 			if (isLargLeap(nh.getMidiPitch()) == 1) {
 				nLargeLeaps++;
-				nLLnotFollStep += notLeftByStepwise(nh, track.getNoteSequence());
+				int indexOfStep = intervals.indexOf(nh)+1;
+				nLLnotFollStep += notLeftByStepwise(track.getNoteSequence().get(indexOfStep), track.getNoteSequence());
 			}
 		}
 		return ((double) nLLnotFollStep)/nLargeLeaps;
@@ -107,10 +111,10 @@ public abstract class FuxMetrics {
 	public static double fux7LargeLeapFollStepwise (Track track) {
 		int nLLnotChangedDir = 0;
 		//int nLargeLeaps = 0;
-		for (NoteHerremans nh: intervals.subList(0, intervals.size()-2)) {
+		for (NoteHerremans nh: intervals.subList(0, intervals.size()-1)) {
 			if (isLargLeap(nh.getMidiPitch()) == 1) {
 				//nLargeLeaps++;
-				if (nh.getMidiPitch()*intervals.get(intervals.indexOf(nh)+1).getMidiPitch() >0)
+				if (nh.getMidiPitch()*intervals.get(intervals.indexOf(nh)+1).getMidiPitch() >= 0)
 					nLLnotChangedDir++;
 			}
 		}
@@ -123,7 +127,7 @@ public abstract class FuxMetrics {
 	
 	public static double fux9MaxTwoConsecutiveLeaps (Track track) {
 		int nConsecutive3Leaps = 0;
-		for (NoteHerremans nh: intervals.subList(0, intervals.size()-3)) {
+		for (NoteHerremans nh: intervals.subList(0, intervals.size()-2)) {
 			int nLeaps = 0;
 			nLeaps += isLeap(nh.getMidiPitch());
 			nLeaps += isLeap(intervals.get(intervals.indexOf(nh)+1).getMidiPitch());
@@ -131,7 +135,7 @@ public abstract class FuxMetrics {
 			if (nLeaps == 3) 
 				nConsecutive3Leaps++;
 		}
-		return ((double) nConsecutive3Leaps)/(track.getBarNumber()-3);
+		return ((double) nConsecutive3Leaps)/(track.getNoteSequence().size()-3);
 	}
 	
 	public static double fux10MaxTwoLargeLeaps(Track track) {
@@ -139,12 +143,12 @@ public abstract class FuxMetrics {
 		if (nLargeLeaps <= 2*L)
 			return 0;
 		else 
-			return (nLargeLeaps - (2*L))/(track.getBarNumber()-1-(2*L));
+			return (nLargeLeaps - (2*L))/(track.getNoteSequence().size()-1-(2*L));
 	}
 	
 	public static double fux11LongStepwise(Track track) {
 		int maxStepwiseSameDir = 0;
-		for (NoteHerremans nh: intervals.subList(0, intervals.size()-1)) {
+		for (NoteHerremans nh: intervals) {
 			if (isStepwiseMotion(nh.getMidiPitch()) == 1) {
 				int nStepwise = 1;
 				NoteHerremans auxPastNote = nh;
@@ -166,24 +170,33 @@ public abstract class FuxMetrics {
 			}
 		}
 		if (maxStepwiseSameDir > 5)
-			return ((double) maxStepwiseSameDir)/track.getBarNumber();
+			return ((double) maxStepwiseSameDir)/track.getNoteSequence().size();
 		return 0;
 	}
 	
 	public static double fux12ChangedDirections (Track track) {
 		int nChangedDirections = 0;
 		for (NoteHerremans nh: intervals.subList(0, intervals.size()-1)) {
-			if(isStepwiseSameDirection(nh.getMidiPitch(), intervals.get(intervals.indexOf(nh)+1).getMidiPitch()) == 0);
-				nChangedDirections++;
+			if (nh.getMidiPitch() != 0) {
+				for (NoteHerremans nh2: intervals.subList(intervals.indexOf(nh)+1, intervals.size())) {
+					if (nh2.getMidiPitch() != 0) {
+						if(isStepwiseSameDirection(nh.getMidiPitch(), nh2.getMidiPitch()) == 0)
+							nChangedDirections++;
+						break;
+					}
+				}
+			}
+			
+			
 		}
 		if (nChangedDirections < 3*L)
-			return 1-(nChangedDirections/(3*L));
+			return 1-(((double) nChangedDirections)/(3*L));
 		return 0.0;
 	}
 	
 	public static double fux13TonicEndNote (Track track) {
 		int key = Constants.Constants.RANGE_MIN_PITCH;
-		if ((track.getNoteSequence().get(track.getNoteSequence().size()-1).getMidiPitch()- key)%12 == 0)
+		if ((track.getNoteSequence().get(track.getNoteSequence().size()-1).getMidiPitch()- key)%12 != 0)
 			return 1.0;
 		return 0.0;
 	}
@@ -194,11 +207,15 @@ public abstract class FuxMetrics {
 		int penultimateTone = track.getNoteSequence().get(track.getNoteSequence().size()-2).getMidiPitch();
 		if ((penultimateTone - key)%12 == 11) {
 			int lastTone = track.getNoteSequence().get(track.getNoteSequence().size()-1).getMidiPitch();
-			if (penultimateTone/12 == lastTone/12+1)
-				return 1.0;
+			if (penultimateTone/12 == lastTone/12)
+				return 0.0;
+			else {
+				if (lastTone%12 == 0 && penultimateTone/12 +1 == lastTone/12)
+					return 0.0;
+			}
 			return 0.5;
 		}
-		return 0.0;
+		return 1.0;
 	}
 	
 	public static double fux15ConsonantMotionInterval (Track track) {
@@ -265,7 +282,7 @@ public abstract class FuxMetrics {
 	}
 	
 	private static int isStepwiseSameDirection (int interval1, int interval2) {
-		if (interval1*interval2 >= 0)
+		if (interval1*interval2 > 0)
 			return 1;
 		else
 			return 0;

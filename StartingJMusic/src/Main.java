@@ -178,17 +178,17 @@ public final class Main implements JMC {
 	}
 	
 	public static void evalRandomInvididual () {
-		String fit = FitnessConstants.ZIPF_FITNESS;
-		Individual i1 = new Individual(30, Constants.BAR_REMAINING_DURATION);
+		String fit = FitnessConstants.FUX_FITNESS;
+		Individual i1 = new Individual(3, Constants.BAR_REMAINING_DURATION);
 		i1.createTrack();
 		i1.getTrack().setName("justRandomTest.mid");
 		i1.getZipfMetrics().setZipfCountMethod(fit);
-		i1.getZipfMetrics().pitchBigramMetricCalculator(i1.getTrack());
+		//i1.getZipfMetrics().pitchBigramMetricCalculator(i1.getTrack());
 		Fitness.fitness(i1, fit);
-		printCoefFitness(i1);
+		//printCoefFitness(i1);
 		//i1.getTrack().trackToScaleMidi(0, fitness+mutation);
-		i1.getTrack().trackToMidi("");
-		i1.getZipfMetrics().writeZipfData(i1.getTrack());
+		//i1.getTrack().trackToMidi("");
+		//i1.getZipfMetrics().writeZipfData(i1.getTrack());
 		
 	}
 	
