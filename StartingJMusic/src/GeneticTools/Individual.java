@@ -21,7 +21,7 @@ public class Individual {
 	public Individual (int musicLenghtNotes, String generationType) {
 		r = new Random();
 		r.setSeed(0);
-		//r.setSeed(System.currentTimeMillis());
+		r.setSeed(System.currentTimeMillis());
 		this.musicLengthBars = musicLenghtNotes;
 		this.setGenerationType(generationType);
 		Date d = new Date(System.currentTimeMillis());

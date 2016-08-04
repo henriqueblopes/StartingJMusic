@@ -17,6 +17,7 @@ public abstract class Fitness {
 	public static int scale = 0;
 	
 	public static void fitness (Individual i, String method) {
+		i.getZipfMetrics().initZipfVector(i.getTrack());
 		Individual iAux = new Individual(i.getMusicLenthBars(), i.getGenerationType());
 		if (scale == 1 ) {
 			iAux.setTrack(Track.copyNoteSequence(i.getTrack()));
@@ -189,6 +190,7 @@ public abstract class Fitness {
 	
 	public static double zipfFitnessErrorFit (Individual i){
 		double a = 0.0;
+		
 		a += i.getZipfMetrics().pitchMetricCalculator(i.getTrack());
 		a += i.getZipfMetrics().pitchDistanceMetricCalculator(i.getTrack());
 		a += i.getZipfMetrics().pitchDurationMetricCalculator(i.getTrack());

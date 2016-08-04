@@ -112,7 +112,7 @@ public final class Main implements JMC {
 			String selection = Constants.BINARY_TOURNAMENT;
 			String crossOver = Constants.CROSS_OVER_BAR;
 			String fitness = FitnessConstants.FUX_FITNESS;
-			String mutation = MutationConstants.CHANGE_ONE_NOTE_BAR;
+			String mutation = MutationConstants.MUTATE_RHYTHM_TRIGRAM_BAR;
 			String generationType = Constants.BAR_REMAINING_DURATION;
 			GeneticAlgorithm ga = new GeneticAlgorithm(200, 1500, 0.90, 0.3, 30, selection, crossOver, fitness, mutation, generationType);
 			ga.runGeneticPaired();

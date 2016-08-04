@@ -64,10 +64,52 @@ public class Mutation {
 		fixedNotes.add(changed);
 		fixBarDurationforMutation(barCopied, fixedNotes, Constants.BAR_TEMPO);
 		
-		switchBar(changed.getMeasure(), i.getTrack().getNoteSequence(), barCopied);
+		//System.out.print(i.getTrack().getNoteSequence().get(i.getTrack().getNoteSequence().size()-1).getMeasure());
+		ArrayList<NoteHerremans> aux = switchBar(changed.getMeasure(), i.getTrack().getNoteSequence(), barCopied);
+		i.getTrack().setNoteSequence(aux);
 		i.getTrack().rebuildMeasure();
+	//	System.out.println(" " +i.getTrack().getNoteSequence().get(i.getTrack().getNoteSequence().size()-1).getMeasure());
 		
 		return i;
+		
+	}
+	
+	public static Individual mutateRhythmTrigramBar (Individual i) {
+		int positionTrigram = rhythmTrigramPositionBySideLine(i);
+		ArrayList<NoteHerremans> fixedNotes = new ArrayList<NoteHerremans>();
+		
+		NoteHerremans changed = new NoteHerremans(0, 0.0);
+		changed.setMeasure(i.getTrack().getNoteSequence().get(positionTrigram).getMeasure());
+		
+		if (changed.getMeasure() == i.getTrack().getNoteSequence().get(positionTrigram+1).getMeasure()) {
+			ArrayList<NoteHerremans> bar = pickCurrentBar(i.getTrack().getNoteSequence(), changed);
+			//definir antes de copiar compassoquais notas serão alteradas
+			ArrayList<NoteHerremans> barCopied = Track.copyNoteSequence(bar);
+			
+			int indexBar = i.getTrack().getNoteSequence().indexOf(bar.get(0));
+			int indexChanged = positionTrigram - indexBar;
+			if(indexChanged >= barCopied.size())
+				System.out.println("ops");
+			fixedNotes.add(barCopied.get(indexChanged));
+			fixedNotes.add(barCopied.get(indexChanged+1));
+			
+			double dur1 = iAux.randomDuration();
+			double dur2 = iAux.randomDuration();
+			while (dur1 + dur2 >= Constants.BAR_TEMPO + Constants.EPSILON_DURATION) {
+				dur1 = iAux.randomDuration();
+				dur2 = iAux.randomDuration();
+			}
+			barCopied.get(indexChanged).setDuration(dur1);
+			barCopied.get(indexChanged+1).setDuration(dur2);
+			fixBarDurationforMutation(barCopied, fixedNotes, Constants.BAR_TEMPO);
+			i.getTrack().setNoteSequence(switchBar(changed.getMeasure(), i.getTrack().getNoteSequence(), barCopied));
+			i.getTrack().rebuildMeasure();
+		}
+		else {
+			
+		}
+		return i;
+		
 		
 	}
 	
@@ -147,6 +189,8 @@ public class Mutation {
 		return i;
 	}
 	
+	
+	
 	public static Individual mutateRhythmTrigram (Individual i) {
 		
 		double targetSlope = -1.0;
@@ -217,7 +261,7 @@ public class Mutation {
 		int indexRandomNGram = r.nextInt(maxRankedRhyTrigrams.size());
 		NoteForCount trigram = maxRankedRhyTrigrams.get(indexRandomNGram);
 		int randomOcurrencyOfTrigram = r.nextInt(i.getZipfMetrics().getCountedRhythmTrigrams().get(indexRandomNGram).getCount())+1;
-		int positionTrigram = discoverTargetRhythmNgram(i.getZipfMetrics().getRhythmIntervals(), trigram, 3, randomOcurrencyOfTrigram);
+		int positionTrigram = discoverTargetRhythmNgram(i.getZipfMetrics().getRhythmIntervals(), trigram, 3, randomOcurrencyOfTrigram, i);
 		i.getTrack().getNoteSequence().get(positionTrigram+1).setDuration(i.randomDuration());
 		i.getTrack().getNoteSequence().get(positionTrigram+2).setDuration(i.randomDuration());
 		return i;
@@ -437,7 +481,7 @@ public class Mutation {
 		}
 		return null;
 	}
-	private static int discoverTargetRhythmNgram (ArrayList<NoteHerremans> nhs, NoteForCount trigram, int nGramOrder, int b) {
+	private static int discoverTargetRhythmNgram (ArrayList<NoteHerremans> nhs, NoteForCount trigram, int nGramOrder, int b, Individual i) {
 		int c  = 1;
 		int flag = 1;
 		int positionTrigram = 0;
@@ -492,6 +536,7 @@ public class Mutation {
 			}
 			
 		}
+
 		return positionTrigram;
 		
 	}
@@ -516,6 +561,37 @@ public class Mutation {
 			}
 		}
 		return positionTrigram;	
+	}
+	
+	private static int rhythmTrigramPositionBySideLine (Individual i) {
+		double targetSlope = -1.0;
+		int nGramOrder = 3;
+		Random r = new Random();
+		int a = 0;
+		if (i.getZipfMetrics().rhythmTrigramMetricCalculator(i.getTrack()) > targetSlope) {
+			if (r.nextInt(10) < 9)
+				a = r.nextInt(i.getZipfMetrics().getCountedRhythmTrigrams().size()/2)+i.getZipfMetrics().getCountedRhythmTrigrams().size()/2;
+			else
+				a = r.nextInt(i.getZipfMetrics().getCountedRhythmTrigrams().size()/2);
+		}
+		else {
+			if (r.nextInt(10) > 8)
+				a = r.nextInt(i.getZipfMetrics().getCountedRhythmTrigrams().size()/2)+i.getZipfMetrics().getCountedRhythmTrigrams().size()/2;
+			else
+				a = r.nextInt(i.getZipfMetrics().getCountedRhythmTrigrams().size()/2);
+		}
+		int b = r.nextInt(i.getZipfMetrics().getCountedRhythmTrigrams().get(a).getCount())+1;
+		
+		int c = 1;
+		
+		NoteForCount trigram = i.getZipfMetrics().getCountedRhythmTrigrams().get(a);
+		
+		ArrayList<NoteHerremans> nhs = i.getZipfMetrics().getRhythmIntervals();
+		int flag = 1;
+		int positionTrigram = discoverTargetRhythmNgram(i.getZipfMetrics().getRhythmIntervals(), trigram, nGramOrder, b, i);
+		
+		return positionTrigram +1;
+		
 	}
 	
 	public static Individual mutateAllMethods(Individual i) {
@@ -604,6 +680,7 @@ public class Mutation {
 	}
 	
 	private static ArrayList<NoteHerremans>  switchBar (int barNumber, ArrayList<NoteHerremans> nhs, ArrayList<NoteHerremans> bar) {
+		int naux = nhs.get(nhs.size()-1).getMeasure();
 		ArrayList<NoteHerremans> beforePart = new ArrayList<NoteHerremans>();
 		ArrayList<NoteHerremans> afterPart = new ArrayList<NoteHerremans>();
 		int initIndex = 0;
@@ -614,10 +691,10 @@ public class Mutation {
 				break;
 			} 
 		}
-		beforePart = new ArrayList<NoteHerremans>(nhs.subList(initIndex, nhs.size()-1));
+		beforePart = new ArrayList<NoteHerremans>(nhs.subList(initIndex, nhs.size()));
 		for (NoteHerremans nhAux: beforePart) {
 			if (nhAux.getMeasure() != barNumber) {
-				afterPart = new ArrayList<NoteHerremans>(beforePart.subList(beforePart.indexOf(nhAux), beforePart.size()-1));
+				afterPart = new ArrayList<NoteHerremans>(beforePart.subList(beforePart.indexOf(nhAux), beforePart.size()));
 				break;
 			} 
 		}
@@ -628,6 +705,13 @@ public class Mutation {
 		newTrack.addAll(beforePart);
 		newTrack.addAll(bar);
 		newTrack.addAll(afterPart);
+		
+		Track t = new Track("aux");
+		t.setNoteSequence(newTrack);
+		t.rebuildMeasure();
+		
+		if (naux != t.getBarNumber())
+			System.out.println("erro");
 		return newTrack;
 	}
 	

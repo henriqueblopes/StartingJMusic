@@ -59,7 +59,7 @@ public class ZipfMetrics {
 		setRhythmIntervals(convertRhythmInterval(rhythms));
 	}
 	
-	private void initZipfVector (Track t) {
+	public void initZipfVector (Track t) {
 		chromaticPitchs = convertMod12Pitch(t.getNoteSequence());
 		setMelodicIntervals(convertMelodicInterval(t.getNoteSequence()));
 		rhythms = convertRhythm(t.getNoteSequence());
