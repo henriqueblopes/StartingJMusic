@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
+import jm.constants.Durations;
+
 import org.apache.commons.math3.analysis.function.Constant;
 
 import weka.clusterers.forOPTICSAndDBScan.Utils.EpsilonRange_ListElement;
@@ -41,6 +43,71 @@ public class Mutation {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public static Individual splitNoteDuration( Individual i) {
+		Random r = new Random();
+		int a = r.nextInt(i.getTrack().getNoteSequence().size());
+		NoteHerremans nh = i.getTrack().getNoteSequence().get(a);
+		if (nh.getDuration() > Durations.SIXTEENTH_NOTE + Constants.EPSILON_DURATION) {
+			nh.setDuration(nh.getDuration()/2);
+			NoteHerremans nh2 = new NoteHerremans(nh);
+			ArrayList<NoteHerremans> beforePart = new ArrayList<NoteHerremans>(i.getTrack().getNoteSequence().subList(0, a+1));
+			ArrayList<NoteHerremans> afterPart = new ArrayList<NoteHerremans>(i.getTrack().getNoteSequence().subList(a+1, i.getTrack().getNoteSequence().size()));
+			beforePart.add(nh2);
+			ArrayList<NoteHerremans> newTrack = new ArrayList<NoteHerremans>();
+			newTrack.addAll(beforePart);
+			newTrack.addAll(afterPart);
+			i.getTrack().setNoteSequence(newTrack);
+		}
+		return i;
+	}
+	
+	public static Individual joinNoteDuration( Individual i) {
+		Random r = new Random();
+		int a = r.nextInt(i.getTrack().getNoteSequence().size()-1);
+		NoteHerremans nh = i.getTrack().getNoteSequence().get(a);
+		if (nh.getDuration() < Durations.WHOLE_NOTE - Constants.EPSILON_DURATION) {
+			if (i.getTrack().getNoteSequence().get(a+1).getDuration() == nh.getDuration()
+				&& i.getTrack().getNoteSequence().get(a+1).getMeasure() == nh.getMeasure()) {
+				i.getTrack().getNoteSequence().get(a+1).setDuration(nh.getDuration()*2);
+				if (r.nextInt(2) == 0)
+					i.getTrack().getNoteSequence().get(a+1).setMidiPitch(nh.getMidiPitch());
+				ArrayList<NoteHerremans> beforePart = new ArrayList<NoteHerremans>(i.getTrack().getNoteSequence().subList(0, a));
+				ArrayList<NoteHerremans> afterPart = new ArrayList<NoteHerremans>(i.getTrack().getNoteSequence().subList(a+1, i.getTrack().getNoteSequence().size()));
+				ArrayList<NoteHerremans> newTrack = new ArrayList<NoteHerremans>();
+				newTrack.addAll(beforePart);
+				newTrack.addAll(afterPart);
+				i.getTrack().setNoteSequence(newTrack);
+			}
+			
+		}
+		return i;
+	}
+	
+	public static Individual splitOrJoinNoteDuration (Individual i) {
+		Random r = new Random();
+		if (r.nextInt(2) == 0) 
+			splitNoteDuration(i);
+		else
+			joinNoteDuration(i);
+		return i;
+	}
+	
+	public static Individual mixMutationTest (Individual i) {
+		Random r = new Random();
+		int nMut = 1;
+		switch (r.nextInt(nMut)) {
+			case 0: 
+				changeOneNoteBar(i);
+				splitOrJoinNoteDuration(i);
+				break;
+			case 1:
+				mutateRhythmTrigramBar(i);
+				mutateMelodicTrigram(i);
+				break;
+		}
+		return i;
 	}
 	
 	public static Individual changeOneNoteBar (Individual i) {
@@ -668,8 +735,8 @@ public class Mutation {
 	}
 
 	private static void completeBarForMutation(ArrayList<NoteHerremans> bar, double barDuration, int barNumber) {
-		while (barDuration <= Constants.BAR_TEMPO -Constants.EPSILON_DURATION) {
-			NoteHerremans nh = iAux.createRandomNote();;
+		while (Math.abs(Constants.BAR_TEMPO - barDuration) >=  Constants.EPSILON_DURATION) {
+			NoteHerremans nh = iAux.createRandomNote();
 			while (Constants.BAR_TEMPO - barDuration < nh.getDuration() - Constants.EPSILON_DURATION)
 				nh = iAux.createRandomNote();
 			nh.setMeasure(barNumber);

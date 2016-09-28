@@ -39,4 +39,23 @@ public abstract class Selection {
 		else
 			return i2;
 	}
+	
+	public static Individual binaryTournamentCrowdedComparison(ArrayList<Individual> population) {
+		Random r = new Random();
+		Individual i1 = population.get(r.nextInt(population.size()));
+		Individual i2 = population.get(r.nextInt(population.size()));
+		while (i1 == i2)
+			i2 = population.get(r.nextInt(population.size()));
+		if (i1.getNonDominationRank() < i2.getNonDominationRank())
+			return i1;
+		else if (i1.getNonDominationRank() == i2.getNonDominationRank()) {
+			if (i1.getCrowdingdistance() > i2.getCrowdingdistance())
+				return i1;
+			else {
+				return i2;
+			}
+		}
+		else
+			return i2;
+	}
 }

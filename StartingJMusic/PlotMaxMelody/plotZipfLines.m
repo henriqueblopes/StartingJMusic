@@ -36,7 +36,7 @@ function [fitB, fitE] = plotZipfLines(zipfs, column)
             plot(X,Y,'*');
             hold on
             plot(X,mdl.Coefficients.Estimate(1,1) + mdl.Coefficients.Estimate(2,1)*X, 'r')
-            plot(X,a + b*X, 'g')
+           % plot(X,a + b*X, 'g')
             title({strcat(metrics{1,j}, ':', 'b=',num2str(mdl.Coefficients.Estimate(2,1)),' a=', num2str(mdl.Coefficients.Estimate(1,1)), ' mse=', num2str(mdl.MSE), ' r=',num2str(mdl.Rsquared.Adjusted)); 
                 strcat(' mse-1=', num2str(e), ' a-1=', num2str(a))})
             %title(strcat(metrics{1,j}, ':', 'b=',num2str(b),' a=', num2str(a), ' e=', num2str(e)));

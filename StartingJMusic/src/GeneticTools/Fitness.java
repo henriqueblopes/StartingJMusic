@@ -47,6 +47,12 @@ public abstract class Fitness {
 			i.setTrack(iAux.getTrack());
 		}
 	}
+	
+	public static double multiObjectiveFitness(Individual i) {
+		i.fitnesses[0] = Fitness.fuxFitness(i);
+		i.fitnesses[1] = Fitness.zipfFitnessErrorFit(i);
+		return 0.0;
+	}
 	public static double zipfFitness (Individual i){
 		
 		Track tAux = Track.copyNoteSequence(i.getTrack());
@@ -231,8 +237,9 @@ public abstract class Fitness {
 		fit -= FuxMetrics.fux12ChangedDirections(i.getTrack());
 		fit -= FuxMetrics.fux13TonicEndNote(i.getTrack());
 		fit -= FuxMetrics.fux14PenultimateLeadingTone(i.getTrack());
-		//fit -= FuxMetrics.fux15ConsonantMotionInterval(i.getTrack());
-		//fit -= FuxMetrics.fux16LargeMotionInterval(i.getTrack());
+		fit -= FuxMetrics.fux15ConsonantMotionInterval(i.getTrack());
+		fit -= FuxMetrics.fux16LargeMotionInterval(i.getTrack());
+		fit -= FuxMetrics.fux19LargestInterval(i.getTrack());
 		
 		return fit;
 	}

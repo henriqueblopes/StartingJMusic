@@ -10,4 +10,5 @@ public final class FitnessConstants {
 	public static final String ZIPF_FRACTAL_FITNESS = "zipfFractalFitness";
 	public static final String ZIPF_FRACTAL_FITNESS_PRINT = "zipfFractalFitnessPrint";
 	public static final String FUX_FITNESS = "fuxFitness";
+	public static final String MULTI_OBJECTIVE_FITNESS = "multiObjectiveFitness";
 }

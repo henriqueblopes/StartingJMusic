@@ -10,8 +10,7 @@ public final class Constants {
 	
 	//Selections
 	public static final String BINARY_TOURNAMENT = "binaryTournament";
-	
-	
+	public static final String BINARY_TOURNAMENT_CROWDED_COMPARISON = "binaryTournamentCrowdedComparison";	
 	
 	//Mutations
 	/*public static final String CHANGE_ONE_NOTE = "changeOneNote";

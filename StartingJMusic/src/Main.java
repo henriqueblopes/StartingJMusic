@@ -38,8 +38,9 @@ public final class Main implements JMC {
 		//testPerformanceFitness();
 		//pcaInput();
 		//evalInputMusic();
-		runGenetic(0, 4);
-		runGenetic(1, 4);
+		runNSGA2(0, 1);
+		//runGenetic(0, 1);
+		//runGenetic(1, 1);
 	}
 	
 	public static void printMusic(Individual i1) {
@@ -102,6 +103,35 @@ public final class Main implements JMC {
 		System.out.println("Fitness: " + max.getFitness()) ;
 	}
 	
+	public static void runNSGA2 (int inScale, int nReplics) {
+		for (int i = 0; i< nReplics; i++) {
+			if (inScale ==1) {
+				Constants.RANGE_MAX_PITCH = Constants.RANGE_MIN_PITCH + 3*7;
+				Fitness.scale = 1;
+			}
+				
+			String selection = Constants.BINARY_TOURNAMENT;
+			String crossOver = Constants.CROSS_OVER_BAR;
+			String fitness = FitnessConstants.MULTI_OBJECTIVE_FITNESS;
+			String mutation = MutationConstants.CHANGE_ONE_NOTE_BAR;
+			String generationType = Constants.BAR_REMAINING_DURATION;
+			GeneticAlgorithm ga = new GeneticAlgorithm(200, 1500, 0.90, 0.3, 30, selection, crossOver, fitness, mutation, generationType);
+			ga.nsga2();
+			ga.exportConvergence();
+			Individual max = ga.returnMaxIndividual();
+			max.getTrack().setName(fitness+mutation+max.getTrack().getName());
+			if (inScale ==1) {
+				max.getTrack().setName("C+"+max.getTrack().getName());
+				max.getTrack().trackToScaleMidi(0, fitness+mutation);
+			}
+			else
+				max.getTrack().trackToMidi(fitness+mutation);
+			
+			//max.getZipfMetrics().writeZipfData(max.getTrack());
+			//printCoefFitness(max);
+		}
+
+	}
 	public static void runGenetic (int inScale, int nReplics) {
 		for (int i = 0; i< nReplics; i++) {
 			if (inScale ==1) {
@@ -112,7 +142,7 @@ public final class Main implements JMC {
 			String selection = Constants.BINARY_TOURNAMENT;
 			String crossOver = Constants.CROSS_OVER_BAR;
 			String fitness = FitnessConstants.FUX_FITNESS;
-			String mutation = MutationConstants.MUTATE_RHYTHM_TRIGRAM_BAR;
+			String mutation = MutationConstants.CHANGE_ONE_NOTE_BAR;
 			String generationType = Constants.BAR_REMAINING_DURATION;
 			GeneticAlgorithm ga = new GeneticAlgorithm(200, 1500, 0.90, 0.3, 30, selection, crossOver, fitness, mutation, generationType);
 			ga.runGeneticPaired();

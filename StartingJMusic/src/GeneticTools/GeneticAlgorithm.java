@@ -8,6 +8,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Random;
 
+import Comparators.IndividualComparatorByObjective;
+import Comparators.IndividualComparatorCrowdingDistance;
+import Comparators.IndividualComparatorNonDominationRank;
 import Constants.MutationConstants;
 import NoteEnconding.Track;
 
@@ -245,6 +248,138 @@ public class GeneticAlgorithm {
 		return getPopulation();
 	}
 	
+	public ArrayList<Individual> nsga2 () {
+		initializeRandomPopulation();
+		ArrayList<Individual> offSpring = new ArrayList<Individual>();
+		fastNonDominatedSort(getPopulation());
+		crowdingDistance(getPopulation());
+		for (int i = 0;i < getGenerations(); i++) {
+			
+			while (offSpring.size() < getPopulationLength()) {
+				Random r = new Random();
+				if (r.nextFloat() < getCrossOverRate()) {
+					Individual i1 = Selection.selection(getPopulation(),getSelectionMethod()).clone();
+					Individual i2 = Selection.selection(getPopulation(),getSelectionMethod()).clone();
+					Individual[] ii = CrossOver.crossOver(i1, i2, getMusicLengthBar(), getCrossOverMethod());
+					Fitness.fitness(ii[0], getFitnessMethod());
+					Fitness.fitness(ii[1], getFitnessMethod());
+					if (offSpring.size() < getPopulationLength() -1) {
+						offSpring.add(ii[0]);
+						offSpring.add(ii[1]);
+					}
+					else {
+						offSpring.add(ii[0]);
+						break;
+					}
+				}
+				if(r.nextFloat() < getMutationRate()) {
+					Individual i1 = Selection.selection(getPopulation(),getSelectionMethod()).clone();
+					Date d = new Date(System.currentTimeMillis());
+					i1.getTrack().setName("M_"+(d.getYear()+1900)+"_"+(d.getMonth()+1)+"_"+d.getDate()+"_"+d.getHours()+"_"+d.getMinutes()+"_"+d.getSeconds()+".mid");
+					if (offSpring.size() < getPopulationLength()) {
+						offSpring.add(Mutation.mutation(i1, getMutationMethod()));
+						Fitness.fitness(i1, getFitnessMethod());
+					}
+					else
+						break;
+				}
+			}
+			getPopulation().addAll(offSpring);
+			fastNonDominatedSort(getPopulation());
+			crowdingDistance(getPopulation());
+			Collections.sort(population, new IndividualComparatorNonDominationRank());
+			offSpring = new ArrayList<Individual>();
+			int initialNRank = getPopulation().get(0).getNonDominationRank();
+			int initialNRankIndex = 0;
+			for (Individual ind: getPopulation()) {
+				if (ind.getNonDominationRank() != initialNRank) {
+					ArrayList<Individual> front = new ArrayList<Individual>(getPopulation().subList(initialNRankIndex, getPopulation().indexOf(ind)));
+					if (offSpring.size() + front.size() < getPopulationLength())
+						offSpring.addAll(front);
+					else if (offSpring.size() + front.size() == getPopulationLength()) {
+						offSpring.addAll(front);
+						break;
+					}
+					else {
+						Collections.sort(front, new IndividualComparatorCrowdingDistance());
+						offSpring.addAll(front.subList(0, getPopulationLength()-offSpring.size()));
+						break;
+					}
+				}
+			}
+			i++;
+			population = offSpring;
+		}
+		return population;
+		
+	}
+	
+	private void calculateFrontCrowdingDistance (ArrayList<Individual> front) {
+		
+		for (int m = 0; m < front.get(0).fitnesses.length; m ++) {
+			Collections.sort(front, new IndividualComparatorByObjective(m));
+			front.get(0).setCrowdingdistance(Double.POSITIVE_INFINITY);
+			front.get(front.size()-1).setCrowdingdistance(Double.POSITIVE_INFINITY);
+			for (Individual i: front.subList(1, front.size()-1)) {
+				i.setCrowdingdistance(i.getCrowdingdistance() + 
+					(front.get(front.indexOf(i)+1).fitnesses[m]	- front.get(front.indexOf(i)-1).fitnesses[m])
+					/(front.get(0).fitnesses[m]- front.get(front.size()-1).fitnesses[m]));
+			}
+		}
+		
+	}
+	
+	//testar
+	private void crowdingDistance(ArrayList<Individual> population) {
+		Collections.sort(population, new IndividualComparatorNonDominationRank());
+		int nRank = population.get(0).getNonDominationRank();
+		int initialNRank = 0;
+		for (Individual i: population) {
+			if (i.getNonDominationRank() != nRank) {
+				ArrayList<Individual> front = new ArrayList<Individual>(population.subList(initialNRank, population.indexOf(i)));
+				calculateFrontCrowdingDistance(front);
+				initialNRank = population.indexOf(i);
+				nRank++;
+			}
+		}
+		calculateFrontCrowdingDistance(new ArrayList<Individual>(population.subList(initialNRank, population.size())));
+	}
+
+	private void fastNonDominatedSort(ArrayList<Individual> population) {
+		ArrayList<Individual> firstFront = new ArrayList<Individual>();
+		for (Individual p: population) {
+			p.setDomination(new ArrayList<Individual>());
+			p.setDominationCounter(0);
+			for (Individual q: population) {
+				if (p.dominates(q))
+					p.getDomination().add(q);
+				else
+					if (q.dominates(p))
+						p.setDominationCounter(p.getDominationCounter()+1);
+			}
+			if (p.getDominationCounter() == 0) {
+				p.setNonDominationRank(1);
+				firstFront.add(p);
+			}
+		}
+		int i = 1;
+		while (!firstFront.isEmpty()) {
+			ArrayList<Individual> nextFront = new ArrayList<Individual>();
+			for (Individual p: firstFront) {
+				for (Individual q: p.getDomination()) {
+					q.setDominationCounter(q.getDominationCounter()-1);
+					if (q.getDominationCounter() == 0) {
+						q.setNonDominationRank(i+1);
+						nextFront.add(q);
+					}
+						
+				}
+			}
+			i++;
+			firstFront = nextFront;
+		}
+	}
+
 	public Individual returnMaxIndividual () {
 		Individual max = getPopulation().get(0);
 		for (Individual i: getPopulation()) {

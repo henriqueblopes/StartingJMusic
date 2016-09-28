@@ -17,6 +17,11 @@ public class Individual {
 	private Random r;
 	private String generationType;
 	private ZipfMetrics zipfMetrics;
+	public double fitnesses[];
+	private int nonDominationRank = 0;
+	private int dominationCounter = 0;
+	private double crowdingdistance = 0;
+	private ArrayList<Individual> domination;
 	
 	public Individual (int musicLenghtNotes, String generationType) {
 		r = new Random();
@@ -27,6 +32,8 @@ public class Individual {
 		Date d = new Date(System.currentTimeMillis());
 		track = new Track("M_"+(d.getYear()+1900)+"_"+(d.getMonth()+1)+"_"+d.getDate()+"_"+d.getHours()+"_"+d.getMinutes()+"_"+d.getSeconds()+".mid");
 		fitness = 0;
+		fitnesses = new double[2];
+		setDomination(new ArrayList<Individual>());
 	}
 	/*public Individual(int musicLengthBars) {
 		r = new Random();
@@ -49,6 +56,8 @@ public class Individual {
 			this.musicLengthBars = track.getBarNumber();
 		this.setTrack(track);;
 		fitness = 0;
+		fitnesses = new double[2];
+		setDomination(new ArrayList<Individual>());
 		setZipfMetrics(new ZipfMetrics(getTrack()));
 	}
 	
@@ -88,6 +97,38 @@ public class Individual {
 
 	private void setZipfMetrics(ZipfMetrics zipfMetrics) {
 		this.zipfMetrics = zipfMetrics;
+	}
+
+	public ArrayList<Individual> getDomination() {
+		return domination;
+	}
+
+	public void setDomination(ArrayList<Individual> domination) {
+		this.domination = domination;
+	}
+
+	public int getNonDominationRank() {
+		return nonDominationRank;
+	}
+
+	public void setNonDominationRank(int nonDominationRank) {
+		this.nonDominationRank = nonDominationRank;
+	}
+
+	public int getDominationCounter() {
+		return dominationCounter;
+	}
+
+	public void setDominationCounter(int dominationCounter) {
+		this.dominationCounter = dominationCounter;
+	}
+
+	public double getCrowdingdistance() {
+		return crowdingdistance;
+	}
+
+	public void setCrowdingdistance(double crowdingdistance) {
+		this.crowdingdistance = crowdingdistance;
 	}
 
 	public void createTrack() {
@@ -274,6 +315,13 @@ public class Individual {
 		Individual i = new Individual(Track.copyNoteSequence(getTrack()), this.getGenerationType());
 		i.setFitness(this.getFitness());
 		return i;
+	}
+	
+	public boolean dominates(Individual i) {
+		if (fitnesses[0] > i.fitnesses[0])
+			if (fitnesses[1] > i.fitnesses[1])
+				return true;
+		return false;
 	}
 	
 }

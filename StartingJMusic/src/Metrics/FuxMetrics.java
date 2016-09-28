@@ -223,14 +223,16 @@ public abstract class FuxMetrics {
 		int nMotionIntervals = 0;
 		NoteHerremans nh2 = intervals.get(0);
 		int flagStart = 1;
+		int toneStartMotion =0;
 		for (NoteHerremans nh: intervals.subList(1, intervals.size())) {
-			int toneStartMotion =0;
+			
 			if (flagStart == 1) {
 				toneStartMotion = track.getNoteSequence().get(intervals.indexOf(nh2)).getMidiPitch();
 				flagStart = 0;
 			}
+			
 			if (isStepwiseSameDirection(nh.getMidiPitch(), nh2.getMidiPitch()) == 0) {
-				int toneEndMotion = track.getNoteSequence().get(intervals.indexOf(nh2)-1).getMidiPitch();
+				int toneEndMotion = track.getNoteSequence().get(intervals.indexOf(nh)).getMidiPitch();
 				nMotionIntervals++;
 				if(allowedInterval(toneEndMotion-toneStartMotion)==0)
 					nDissonanteMotionInterval++;
@@ -246,14 +248,15 @@ public abstract class FuxMetrics {
 		int nMotionIntervals = 0;
 		NoteHerremans nh2 = intervals.get(0);
 		int flagStart = 1;
+		int toneStartMotion =0;
 		for (NoteHerremans nh: intervals.subList(1, intervals.size())) {
-			int toneStartMotion =0;
+			
 			if (flagStart == 1) {
 				toneStartMotion = track.getNoteSequence().get(intervals.indexOf(nh2)).getMidiPitch();
 				flagStart = 0;
 			}
 			if (isStepwiseSameDirection(nh.getMidiPitch(), nh2.getMidiPitch()) == 0) {
-				int toneEndMotion = track.getNoteSequence().get(intervals.indexOf(nh2)-1).getMidiPitch();
+				int toneEndMotion = track.getNoteSequence().get(intervals.indexOf(nh)).getMidiPitch();
 				nMotionIntervals++;
 				if(Math.abs(toneEndMotion-toneStartMotion) >9)
 					nLargeMotionInterval++;
@@ -275,7 +278,7 @@ public abstract class FuxMetrics {
 	public static double fux19LargestInterval (Track track) {
 		int nLargeIntervals = 0;
 		for (NoteHerremans nh: intervals) {
-			if (nh.getMidiPitch() > 12)
+			if (Math.abs(nh.getMidiPitch()) > 12)
 				nLargeIntervals++;
 		}
 		return ((double) nLargeIntervals)/intervals.size();
