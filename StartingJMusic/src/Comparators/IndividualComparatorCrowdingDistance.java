@@ -9,6 +9,6 @@ public class IndividualComparatorCrowdingDistance implements Comparator<Individu
 	public int compare(Individual arg0, Individual arg1) {
 		if (arg0.getCrowdingdistance() - arg1.getCrowdingdistance() < 0)
 			return 1;
-		else return -1;
+		else return 0;
 	}
 }

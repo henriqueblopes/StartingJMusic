@@ -142,7 +142,7 @@ public final class Main implements JMC {
 			String selection = Constants.BINARY_TOURNAMENT;
 			String crossOver = Constants.CROSS_OVER_BAR;
 			String fitness = FitnessConstants.FUX_FITNESS;
-			String mutation = MutationConstants.CHANGE_ONE_NOTE_BAR;
+			String mutation = MutationConstants.MUTATE_RHYTHM_TRIGRAM_BAR;
 			String generationType = Constants.BAR_REMAINING_DURATION;
 			GeneticAlgorithm ga = new GeneticAlgorithm(200, 1500, 0.90, 0.3, 30, selection, crossOver, fitness, mutation, generationType);
 			ga.runGeneticPaired();
@@ -165,9 +165,15 @@ public final class Main implements JMC {
 	}
 	
 	public static void evalInputMusic () {
-		String fitness = FitnessConstants.ZIPF_FRACTAL_FITNESS_PRINT;
+		//String fitness = FitnessConstants.ZIPF_FITNESS_ERROR_FIT;
+		String fitness = FitnessConstants.ZIPF_FITNESS;
+		//String fitness = FitnessConstants.FUX_FITNESS;
 		Score tmp = new Score("tmp.mid");
-		Read.midi(tmp, "TrechosMidis/mc-Bach,JohannSebastian-ConcertoInAMinor.mid");
+		
+		Read.midi(tmp, "CreatedMelodiesInC+/fuxFitnessmutateRhythmTrigramBar/C+fuxFitnessmutateRhythmTrigramBarM_2016_9_28_11_5_38.mid");
+		//Read.midi(tmp, "CreatedMelodies/zipfFitnessErrorFitmutateAllMethodsCopyingLater/zipfFitnessErrorFitmutateAllMethodsCopyingLaterM_2016_6_3_15_29_8.mid");
+		
+		//Read.midi(tmp, "TrechosMidis/mc-Bach,JohannSebastian-ConcertoInAMinor.mid");
 		//Read.midi(tmp, "TrechosMidis/mc-BachJohannSebastian-SuitenFurVioloncelloN1.mid");
 		//Read.midi(tmp, "TrechosMidis/mc-mc-Beethoven-FurElise.mid");
 		//Read.midi(tmp, "TrechosMidis/mc-bethoven-quintasinfonia1.mid");
@@ -192,7 +198,7 @@ public final class Main implements JMC {
 		Individual i1 = new Individual(t, Constants.NOTE);
 		i1.getZipfMetrics().setZipfCountMethod(fitness);
 		Fitness.fitness(i1, fitness);
-		//System.out.println("Fitness: " + i1.getFitness()) ;
+		System.out.println("Fitness: " + i1.getFitness()) ;
 		//printCoefFitness(i1);
 		i1.getZipfMetrics().writeZipfData(i1.getTrack());
 	}

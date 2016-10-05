@@ -324,6 +324,17 @@ public class Individual {
 		return false;
 	}
 	
+	/*public boolean dominates(Individual i) {
+		if (fitnesses[0] >= i.fitnesses[0])
+			if (fitnesses[1] >= i.fitnesses[1]) {
+				if (fitnesses[0] > i.fitnesses[0])
+					return true;
+				if (fitnesses[1] > i.fitnesses[1])
+					return true;
+			}
+		return false;
+	}*/
+	
 }
 
 

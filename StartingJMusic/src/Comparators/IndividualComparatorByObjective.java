@@ -13,8 +13,8 @@ public class IndividualComparatorByObjective implements Comparator<Individual>{
 	@Override
 	public int compare(Individual arg0, Individual arg1) {
 		if (arg0.fitnesses[objective] - arg1.fitnesses[objective] < 0)
-			return 1;
-		else return -1;
+			return 0;
+		else return 1;
 	}
 
 }

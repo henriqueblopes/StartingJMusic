@@ -104,8 +104,8 @@ public abstract class Fitness {
 		a = i.getZipfMetrics().rhythmTrigramMetricCalculator(i.getTrack());
 		fitness += Math.pow(Math.E,(-Math.pow((-1.0-a),2.0)/lambida));
 		
-		a = i.getZipfMetrics().pitchBigramMetricCalculator(i.getTrack());
-		fitness += Math.pow(Math.E,(-Math.pow((-1.0-a),2.0)/lambida));
+		//a = i.getZipfMetrics().pitchBigramMetricCalculator(i.getTrack());
+		//fitness += Math.pow(Math.E,(-Math.pow((-1.0-a),2.0)/lambida));
 		//fitness += zipfFractalFitness(i);
 		return fitness;
 	}
@@ -211,7 +211,7 @@ public abstract class Fitness {
 		a += i.getZipfMetrics().rhythmIntervalMetricCalculator(i.getTrack());
 		a += i.getZipfMetrics().rhythmBigramMetricCalculator(i.getTrack());
 		a += i.getZipfMetrics().rhythmTrigramMetricCalculator(i.getTrack());
-		a += i.getZipfMetrics().pitchBigramMetricCalculator(i.getTrack());
+		//a += i.getZipfMetrics().pitchBigramMetricCalculator(i.getTrack());
 		return -a;
 	}
 	
