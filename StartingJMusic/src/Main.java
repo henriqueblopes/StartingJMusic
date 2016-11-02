@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Random;
 
 import Constants.Constants;
 import Constants.FitnessConstants;
@@ -8,6 +9,7 @@ import GeneticTools.Fitness;
 import GeneticTools.GeneticAlgorithm;
 import GeneticTools.Individual;
 import Instrument.SawtoothInst;
+import Metrics.FuxMetrics;
 import Metrics.ZipfMetrics;
 import NoteEnconding.NoteHerremans;
 import NoteEnconding.Track;
@@ -38,9 +40,11 @@ public final class Main implements JMC {
 		//testPerformanceFitness();
 		//pcaInput();
 		//evalInputMusic();
-		runNSGA2(0, 1);
+		runNSGA2(0, 10);
+		runNSGA2(1, 10);
 		//runGenetic(0, 1);
 		//runGenetic(1, 1);
+		
 	}
 	
 	public static void printMusic(Individual i1) {
@@ -103,6 +107,29 @@ public final class Main implements JMC {
 		System.out.println("Fitness: " + max.getFitness()) ;
 	}
 	
+	public static void printCoefFuxFitness(Individual max) {
+		//max.getZipfMetrics().convertAll(max.getTrack());
+		System.out.println("fux1 " + FuxMetrics.fux1EightNotes(max.getTrack()));
+		System.out.println("fux2 " + FuxMetrics.fux2OneClimax(max.getTrack()));
+		System.out.println("fux3 " + FuxMetrics.fux3ClimaxOnStrongBeat(max.getTrack()));
+		System.out.println("fux4 " + FuxMetrics.fux4HorizontalConsonantIntervals(max.getTrack()));
+		System.out.println("fux5 " + FuxMetrics.fux5ConjunctStepwise(max.getTrack()));
+		System.out.println("fux6 " + FuxMetrics.fux6LargeLeapFollStepwise(max.getTrack()));
+		System.out.println("fux7 " + FuxMetrics.fux7LargeLeapFollStepwise(max.getTrack()));
+		System.out.println("fux8 " + FuxMetrics.fux8ClimaxConsonantTonic(max.getTrack()));
+		System.out.println("fux9 " + FuxMetrics.fux9MaxTwoConsecutiveLeaps(max.getTrack()));
+		System.out.println("fux10 " + FuxMetrics.fux10MaxTwoLargeLeaps(max.getTrack()));
+		System.out.println("fux11 " + FuxMetrics.fux11LongStepwise(max.getTrack()));
+		System.out.println("fux12 " + FuxMetrics.fux12ChangedDirections(max.getTrack()));
+		System.out.println("fux13 " + FuxMetrics.fux13TonicEndNote(max.getTrack()));
+		System.out.println("fux14 " + FuxMetrics.fux14PenultimateLeadingTone(max.getTrack()));
+		System.out.println("fux15 " + FuxMetrics.fux15ConsonantMotionInterval(max.getTrack()));
+		System.out.println("fux16 " + FuxMetrics.fux16LargeMotionInterval(max.getTrack()));
+		System.out.println("fux19 " + FuxMetrics.fux19LargestInterval(max.getTrack()));
+		
+		
+	}
+	
 	public static void runNSGA2 (int inScale, int nReplics) {
 		for (int i = 0; i< nReplics; i++) {
 			if (inScale ==1) {
@@ -110,15 +137,22 @@ public final class Main implements JMC {
 				Fitness.scale = 1;
 			}
 				
-			String selection = Constants.BINARY_TOURNAMENT;
+			String selection = Constants.BINARY_TOURNAMENT_CROWDED_COMPARISON;
 			String crossOver = Constants.CROSS_OVER_BAR;
 			String fitness = FitnessConstants.MULTI_OBJECTIVE_FITNESS;
-			String mutation = MutationConstants.CHANGE_ONE_NOTE_BAR;
+			String mutation = MutationConstants.MUTATE_RHYTHM_TRIGRAM_BAR;
 			String generationType = Constants.BAR_REMAINING_DURATION;
-			GeneticAlgorithm ga = new GeneticAlgorithm(200, 1500, 0.90, 0.3, 30, selection, crossOver, fitness, mutation, generationType);
+			GeneticAlgorithm ga = new GeneticAlgorithm(300, 1500, 0.90, 0.3, 30, selection, crossOver, fitness, mutation, generationType);
 			ga.nsga2();
-			ga.exportConvergence();
-			Individual max = ga.returnMaxIndividual();
+			//ga.exportConvergence();
+			ArrayList<Individual> firstFront = ga.returnFirstFront();
+			ga.writeFirstFront(firstFront);
+			Random rFront = new Random();
+			Individual max = firstFront.get(rFront.nextInt(firstFront.size()));
+			//checkIndividualEquality(firstFront.get(0), firstFront.get(1));
+			//Individual max = firstFront.get(0);
+			//Fitness.fitness(max, fitness);
+			System.out.println("fitness: (" + max.fitnesses[0] + ", " + max.fitnesses[1] + ")");
 			max.getTrack().setName(fitness+mutation+max.getTrack().getName());
 			if (inScale ==1) {
 				max.getTrack().setName("C+"+max.getTrack().getName());
@@ -142,7 +176,7 @@ public final class Main implements JMC {
 			String selection = Constants.BINARY_TOURNAMENT;
 			String crossOver = Constants.CROSS_OVER_BAR;
 			String fitness = FitnessConstants.FUX_FITNESS;
-			String mutation = MutationConstants.MUTATE_RHYTHM_TRIGRAM_BAR;
+			String mutation = MutationConstants.CHANGE_ONE_NOTE_BAR;
 			String generationType = Constants.BAR_REMAINING_DURATION;
 			GeneticAlgorithm ga = new GeneticAlgorithm(200, 1500, 0.90, 0.3, 30, selection, crossOver, fitness, mutation, generationType);
 			ga.runGeneticPaired();
@@ -166,11 +200,11 @@ public final class Main implements JMC {
 	
 	public static void evalInputMusic () {
 		//String fitness = FitnessConstants.ZIPF_FITNESS_ERROR_FIT;
-		String fitness = FitnessConstants.ZIPF_FITNESS;
+		String fitness = FitnessConstants.ZIPF_FITNESS_ERROR_FIT;
 		//String fitness = FitnessConstants.FUX_FITNESS;
 		Score tmp = new Score("tmp.mid");
-		
-		Read.midi(tmp, "CreatedMelodiesInC+/fuxFitnessmutateRhythmTrigramBar/C+fuxFitnessmutateRhythmTrigramBarM_2016_9_28_11_5_38.mid");
+		Read.midi(tmp, "CreatedMelodies/multiObjectiveFitnessmutateRhythmTrigramBar/multiObjectiveFitnessmutateRhythmTrigramBarM_2016_10_26_13_52_17.mid");
+		//Read.midi(tmp, "CreatedMelodiesInC+/fuxFitnessmutateRhythmTrigramBar/C+fuxFitnessmutateRhythmTrigramBarM_2016_9_28_11_5_38.mid");
 		//Read.midi(tmp, "CreatedMelodies/zipfFitnessErrorFitmutateAllMethodsCopyingLater/zipfFitnessErrorFitmutateAllMethodsCopyingLaterM_2016_6_3_15_29_8.mid");
 		
 		//Read.midi(tmp, "TrechosMidis/mc-Bach,JohannSebastian-ConcertoInAMinor.mid");
@@ -197,8 +231,11 @@ public final class Main implements JMC {
 		Track t = new Track(tmp.getPart(0).getPhrase(0), "Track1");
 		Individual i1 = new Individual(t, Constants.NOTE);
 		i1.getZipfMetrics().setZipfCountMethod(fitness);
+		printCoefFuxFitness(i1);
+		printCoefFitness(i1);
 		Fitness.fitness(i1, fitness);
-		System.out.println("Fitness: " + i1.getFitness()) ;
+		System.out.println("Fitness: " + i1.fitnesses[0] +  " " +i1.fitnesses[1]);
+		
 		//printCoefFitness(i1);
 		i1.getZipfMetrics().writeZipfData(i1.getTrack());
 	}
@@ -267,5 +304,13 @@ public final class Main implements JMC {
 			System.out.println();
 		}
 
+	}
+	
+	public static void checkIndividualEquality(Individual i1, Individual i2) {
+		System.out.println("What?");
+		for (NoteHerremans nh: i1.getTrack().getNoteSequence()) {
+			if (nh.getMidiPitch() == i2.getTrack().getNoteSequence().get(i1.getTrack().getNoteSequence().indexOf(nh)).getMidiPitch())
+				System.out.println("YEah");
+		}
 	}
 }

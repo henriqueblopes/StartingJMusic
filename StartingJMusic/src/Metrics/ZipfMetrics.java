@@ -620,6 +620,10 @@ public class ZipfMetrics {
 			if(i<0)
 				break;
 		}
+		if (cP.length-i-1 == 0) {
+			System.out.println("Erro no perform ErrorFit");
+			return 1.0;
+		}
 		return errorFit/(cP.length-i-1);
 	}
 	
@@ -759,6 +763,8 @@ public class ZipfMetrics {
 
 	public void setZipfCountMethod(String zipfCountMethod) {
 		ZipfMetrics.zipfCountMethod = zipfCountMethod;
+		if(zipfCountMethod.equals(FitnessConstants.MULTI_OBJECTIVE_FITNESS))
+			ZipfMetrics.zipfCountMethod = FitnessConstants.ZIPF_FITNESS_ERROR_FIT;
 	}
 
 	/*public class NoteForCountComparator implements Comparator<NoteForCount>{

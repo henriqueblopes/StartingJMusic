@@ -12,6 +12,7 @@ import Comparators.IndividualComparatorByObjective;
 import Comparators.IndividualComparatorCrowdingDistance;
 import Comparators.IndividualComparatorNonDominationRank;
 import Constants.MutationConstants;
+import JMusicTools.FileTools;
 import NoteEnconding.Track;
 
 public class GeneticAlgorithm {
@@ -255,7 +256,9 @@ public class GeneticAlgorithm {
 		crowdingDistance(getPopulation());
 		for (int i = 0;i < getGenerations(); i++) {
 			if(i%300==0) 
-				System.out.println("Geração: " + i);
+				System.out.println("Geração: " + i + " pop: " + getPopulation().size());
+			if(getPopulation().size() <getPopulationLength())
+				System.out.println("Erro no tamanho da pop");
 			ArrayList<Individual> offSpring = new ArrayList<Individual>();
 			while (offSpring.size() < getPopulationLength()) {
 				Random r = new Random();
@@ -265,10 +268,11 @@ public class GeneticAlgorithm {
 					Individual[] ii = CrossOver.crossOver(i1, i2, getMusicLengthBar(), getCrossOverMethod());
 					Fitness.fitness(ii[0], getFitnessMethod());
 					Fitness.fitness(ii[1], getFitnessMethod());
+					if(ii[0].fitnesses[0] == 0.0 || ii[0].fitnesses[1] == 0.0)
+						System.out.println("errorCrossOver");
 					if (offSpring.size() < getPopulationLength() -1) {
 						offSpring.add(ii[0]);
-						offSpring.add(ii[1]);
-					}
+						offSpring.add(ii[1]);					}
 					else {
 						offSpring.add(ii[0]);
 						break;
@@ -279,17 +283,26 @@ public class GeneticAlgorithm {
 					Date d = new Date(System.currentTimeMillis());
 					i1.getTrack().setName("M_"+(d.getYear()+1900)+"_"+(d.getMonth()+1)+"_"+d.getDate()+"_"+d.getHours()+"_"+d.getMinutes()+"_"+d.getSeconds()+".mid");
 					if (offSpring.size() < getPopulationLength()) {
-						offSpring.add(Mutation.mutation(i1, getMutationMethod()).clone());
-						Fitness.fitness(i1, getFitnessMethod());
+						Individual i2 = Mutation.mutation(i1, getMutationMethod()).clone();
+						Fitness.fitness(i2, getFitnessMethod());
+						offSpring.add(i2);
+						
+						if(offSpring.get(offSpring.size()-1).fitnesses[0] == 0.0)
+							System.out.println("errorMutation");
 					}
 					else
 						break;
 				}
 			}
 			
+			seekErrorFitness("beforeAddAll");
 			getPopulation().addAll(offSpring);
+			
+			seekErrorFitness("addAllOffSpring");
 			fastNonDominatedSort(getPopulation());
+			seekErrorFitness("fastNDSort");
 			crowdingDistance(getPopulation());
+			seekErrorFitness("crowDistance");
 			Collections.sort(population, new IndividualComparatorNonDominationRank());
 			offSpring = new ArrayList<Individual>();
 			int initialNRank = getPopulation().get(0).getNonDominationRank();
@@ -306,25 +319,44 @@ public class GeneticAlgorithm {
 						break;
 					}
 					else {
-						Collections.sort(front, new IndividualComparatorCrowdingDistance());
+						try {
+							//Collections.sort(front, new IndividualComparatorCrowdingDistance());
+							front = insertionSortCrowding(front);
+						}
+						catch (IllegalArgumentException e) {
+							e.printStackTrace();
+						}
 						offSpring.addAll(front.subList(0, getPopulationLength()-offSpring.size()));
 						break;
 					}
 				}
 			}
-			i++;
+			
+			//if(offSpring.get(offSpring.size()-1).getNonDominationRank() > 1)
+				//System.out.println(i + ": rank: " + offSpring.get(offSpring.size()-1).getNonDominationRank());
 			population = offSpring;
 		}
 		return population;
 		
 	}
 	
+	private void seekErrorFitness(String s) {
+		for (Individual i: population)
+			if (i.fitnesses[0]== 0.0)
+				System.out.println("error " + s);
+	}
+
 	private void calculateFrontCrowdingDistance (ArrayList<Individual> front) {
 		
 		for (Individual i: front) 
 			i.setCrowdingdistance(0.0);
 		for (int m = 0; m < front.get(0).fitnesses.length; m ++) {
-			Collections.sort(front, new IndividualComparatorByObjective(m));
+			try {
+				Collections.sort(front, new IndividualComparatorByObjective(m));
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
 			front.get(0).setCrowdingdistance(Double.POSITIVE_INFINITY);
 			front.get(front.size()-1).setCrowdingdistance(Double.POSITIVE_INFINITY);
 			
@@ -333,9 +365,17 @@ public class GeneticAlgorithm {
 				for (Individual i: middleFront) {
 					if(front.indexOf(i)-1 == -1)
 						System.out.println("erro");
-					i.setCrowdingdistance(i.getCrowdingdistance() + 
-						(front.get(front.indexOf(i)+1).fitnesses[m]	- front.get(front.indexOf(i)-1).fitnesses[m])
-						/(front.get(0).fitnesses[m]- front.get(front.size()-1).fitnesses[m]));
+					
+					//Perguntar
+					if ((front.get(0).fitnesses[m]- front.get(front.size()-1).fitnesses[m]) == 0.0)
+						i.setCrowdingdistance(i.getCrowdingdistance()+0.0);
+					else {
+						i.setCrowdingdistance(i.getCrowdingdistance() - 
+								(front.get(front.indexOf(i)+1).fitnesses[m]	- front.get(front.indexOf(i)-1).fitnesses[m])
+								/(front.get(0).fitnesses[m]- front.get(front.size()-1).fitnesses[m]));
+					}
+					if(Double.isNaN(i.getCrowdingdistance()))
+						System.out.println("Error CrowdDIstance");
 				}
 			}
 		}
@@ -403,6 +443,19 @@ public class GeneticAlgorithm {
 		return max;
 	}
 	
+	public ArrayList<Individual> returnFirstFront () {
+		fastNonDominatedSort(population);
+		Individual aux = population.get(0);
+		int lastIndexFront = getPopulationLength();
+		for (Individual i: population) {
+			if (i.getNonDominationRank() != aux.getNonDominationRank()) {
+				lastIndexFront = population.indexOf(i);
+				break;
+			}
+		}
+		return new ArrayList<Individual>(population.subList(0, lastIndexFront));
+	}
+	
 	public void exportConvergence () {
 		String content = "";
 		for (Double i: getConvergence()) {
@@ -434,6 +487,39 @@ public class GeneticAlgorithm {
 					System.out.println("duplicity " + population.indexOf(i) +" "+  population.lastIndexOf(i2));
 			}
 		}
+	}
+	
+	public ArrayList<Individual> insertionSortCrowding (ArrayList<Individual> front) {
+		ArrayList<Individual> orderedFront = new ArrayList<Individual>();
+		int n = front.size();
+		for (int i = 0; i < n; i ++) {
+			orderedFront.add(returnMaxCrowdind(front));
+		}
+		return orderedFront;
+	}
+	public Individual returnMaxCrowdind (ArrayList<Individual> front) {
+		Individual max = front.get(0);
+		for (Individual i: front) {
+			if (i.getCrowdingdistance() > max.getCrowdingdistance()) {
+				if (i.getCrowdingdistance() == Double.NaN || i.getCrowdingdistance() == Double.NEGATIVE_INFINITY)
+					System.out.println("Pode ter dado erro no insertion");
+				max = i;
+			}
+		}
+		front.remove(max);
+		return max;
+	}
+	
+	public void writeFirstFront (ArrayList<Individual> firstFront) {
+		Collections.sort(firstFront, new IndividualComparatorByObjective(0));
+		String s = new String();
+		for (Individual i: firstFront) {
+			Double a = i.fitnesses[0];
+			s +=  a.toString() + " ";
+			a = i.fitnesses[1];
+			s +=  a.toString() + "\n";
+		}
+		FileTools.exportDatedFile(s, "multiObjFront", "F_"+firstFront.get(0).getTrack().getName());
 	}
 	
 	

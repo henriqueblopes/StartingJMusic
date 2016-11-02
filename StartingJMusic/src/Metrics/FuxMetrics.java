@@ -105,6 +105,8 @@ public abstract class FuxMetrics {
 				nLLnotFollStep += notLeftByStepwise(track.getNoteSequence().get(indexOfStep), track.getNoteSequence());
 			}
 		}
+		if (nLargeLeaps == 0)
+			return 0.0;
 		return ((double) nLLnotFollStep)/nLargeLeaps;
 	}
 	
@@ -118,6 +120,8 @@ public abstract class FuxMetrics {
 					nLLnotChangedDir++;
 			}
 		}
+		if(nLargeLeaps == 0)
+			return 0.0;
 		return ((double) nLLnotChangedDir)/nLargeLeaps;
 	}
 	
@@ -240,6 +244,8 @@ public abstract class FuxMetrics {
 			}
 			nh2 = nh;
 		}
+		if(nMotionIntervals == 0)
+			return 0.0;
 		return ((double) nDissonanteMotionInterval)/nMotionIntervals;
 	}
 	
@@ -264,6 +270,8 @@ public abstract class FuxMetrics {
 			}
 			nh2 = nh;
 		}
+		if(nMotionIntervals == 0)
+			return 0.0;
 		return ((double) nLargeMotionInterval)/nMotionIntervals;
 	}
 	

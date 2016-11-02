@@ -50,7 +50,10 @@ public abstract class Fitness {
 	
 	public static double multiObjectiveFitness(Individual i) {
 		i.fitnesses[0] = Fitness.fuxFitness(i);
-		i.fitnesses[1] = Fitness.zipfFitnessErrorFit(i);
+		if (i.fitnesses[0] == Double.NaN)
+			System.out.println("Error Fux");
+			
+		i.fitnesses[1] = Fitness.zipfFitnessErrorFit(i); 
 		return 0.0;
 	}
 	public static double zipfFitness (Individual i){
@@ -212,6 +215,11 @@ public abstract class Fitness {
 		a += i.getZipfMetrics().rhythmBigramMetricCalculator(i.getTrack());
 		a += i.getZipfMetrics().rhythmTrigramMetricCalculator(i.getTrack());
 		//a += i.getZipfMetrics().pitchBigramMetricCalculator(i.getTrack());
+		
+		if (Double.isNaN(a) || Double.isInfinite(a)) {
+			System.out.println("Deu erro no errorFit");
+			zipfFitnessErrorFit(i);
+		}
 		return -a;
 	}
 	
@@ -241,6 +249,10 @@ public abstract class Fitness {
 		fit -= FuxMetrics.fux16LargeMotionInterval(i.getTrack());
 		fit -= FuxMetrics.fux19LargestInterval(i.getTrack());
 		
+		if(Double.isNaN(fit)) {
+			System.out.println("fux com erro");
+			fuxFitness(i);
+		}
 		return fit;
 	}
 	

@@ -39,6 +39,7 @@ public final class Constants {
 	
 	//FuxConstants
 	public static final int FUX_LENGTH_BARS = 16;
+	public static final double FUX_POSITIVE_OFFSET = 17.0;
 	
 	
 
