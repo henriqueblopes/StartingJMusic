@@ -9,6 +9,7 @@ import GeneticTools.Fitness;
 import GeneticTools.GeneticAlgorithm;
 import GeneticTools.Individual;
 import Instrument.SawtoothInst;
+import JMusicTools.FileTools;
 import Metrics.FuxMetrics;
 import Metrics.ZipfMetrics;
 import NoteEnconding.NoteHerremans;
@@ -40,9 +41,13 @@ public final class Main implements JMC {
 		//testPerformanceFitness();
 		//pcaInput();
 		//evalInputMusic();
-		runNSGA2(0, 10);
-		runNSGA2(1, 10);
-		//runGenetic(0, 1);
+		runNSGA2(0, 1);
+		//runNSGA2(1, 10);
+		
+		/*ArrayList<Individual> iArray = new ArrayList<Individual>();
+		for (int i =0; i< 6; i++)
+			iArray.add(runGenetic(0, 1));
+		writeObjectivesMusic(iArray, "fux");*/
 		//runGenetic(1, 1);
 		
 	}
@@ -140,9 +145,9 @@ public final class Main implements JMC {
 			String selection = Constants.BINARY_TOURNAMENT_CROWDED_COMPARISON;
 			String crossOver = Constants.CROSS_OVER_BAR;
 			String fitness = FitnessConstants.MULTI_OBJECTIVE_FITNESS;
-			String mutation = MutationConstants.MUTATE_RHYTHM_TRIGRAM_BAR;
+			String mutation = MutationConstants.MUTATE_MELODIC_AND_RHYTHM_TRIGRAM_BAR;
 			String generationType = Constants.BAR_REMAINING_DURATION;
-			GeneticAlgorithm ga = new GeneticAlgorithm(300, 1500, 0.90, 0.3, 30, selection, crossOver, fitness, mutation, generationType);
+			GeneticAlgorithm ga = new GeneticAlgorithm(300, 600, 0.90, 0.3, 30, selection, crossOver, fitness, mutation, generationType);
 			ga.nsga2();
 			//ga.exportConvergence();
 			ArrayList<Individual> firstFront = ga.returnFirstFront();
@@ -166,7 +171,7 @@ public final class Main implements JMC {
 		}
 
 	}
-	public static void runGenetic (int inScale, int nReplics) {
+	public static Individual runGenetic (int inScale, int nReplics) {
 		for (int i = 0; i< nReplics; i++) {
 			if (inScale ==1) {
 				Constants.RANGE_MAX_PITCH = Constants.RANGE_MIN_PITCH + 3*7;
@@ -176,9 +181,9 @@ public final class Main implements JMC {
 			String selection = Constants.BINARY_TOURNAMENT;
 			String crossOver = Constants.CROSS_OVER_BAR;
 			String fitness = FitnessConstants.FUX_FITNESS;
-			String mutation = MutationConstants.CHANGE_ONE_NOTE_BAR;
+			String mutation = MutationConstants.MUTATE_RHYTHM_TRIGRAM_BAR;
 			String generationType = Constants.BAR_REMAINING_DURATION;
-			GeneticAlgorithm ga = new GeneticAlgorithm(200, 1500, 0.90, 0.3, 30, selection, crossOver, fitness, mutation, generationType);
+			GeneticAlgorithm ga = new GeneticAlgorithm(300, 600, 0.90, 0.3, 30, selection, crossOver, fitness, mutation, generationType);
 			ga.runGeneticPaired();
 			ga.exportConvergence();
 			Individual max = ga.returnMaxIndividual();
@@ -192,10 +197,24 @@ public final class Main implements JMC {
 			
 			max.getZipfMetrics().writeZipfData(max.getTrack());
 			
-			Fitness.euclidianDistanceZipf(max);
-			printCoefFitness(max);
+			//Fitness.euclidianDistanceZipf(max);
+			//printCoefFitness(max);
+			return max;
 		}
+		return null;
 
+	}
+	public static void writeObjectivesMusic (ArrayList<Individual> iArray, String fitnessUsed) {
+		String fitness = FitnessConstants.MULTI_OBJECTIVE_FITNESS;
+		for (Individual i: iArray) {
+			i.getZipfMetrics().setZipfCountMethod(FitnessConstants.ZIPF_FITNESS_ERROR_FIT);
+			Fitness.fitness(i, fitness);
+			System.out.println("Fitness: " + i.fitnesses[0] +  " " +i.fitnesses[1]);
+		}
+		if (fitnessUsed.equals("fux"))
+			FileTools.writeFrontToFile(iArray, 1, -1);
+		else
+			FileTools.writeFrontToFile(iArray, 1, -2);
 	}
 	
 	public static void evalInputMusic () {

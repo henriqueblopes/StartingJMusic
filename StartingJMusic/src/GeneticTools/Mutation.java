@@ -144,7 +144,6 @@ public class Mutation {
 	public static Individual mutateRhythmTrigramBar (Individual i) {
 		int positionTrigram = rhythmTrigramPositionBySideLine(i);
 		ArrayList<NoteHerremans> fixedNotes = new ArrayList<NoteHerremans>();
-		
 		NoteHerremans changed = new NoteHerremans(0, 0.0);
 		changed.setMeasure(i.getTrack().getNoteSequence().get(positionTrigram).getMeasure());
 		
@@ -173,7 +172,34 @@ public class Mutation {
 			i.getTrack().rebuildMeasure();
 		}
 		else {
+			ArrayList<NoteHerremans> bar = pickCurrentBar(i.getTrack().getNoteSequence(), changed);
+			ArrayList<NoteHerremans> barCopied = Track.copyNoteSequence(bar);
+			double dur1 = iAux.randomDuration();
+			int indexBar = i.getTrack().getNoteSequence().indexOf(bar.get(0));
+			int indexChanged = positionTrigram - indexBar;
+			fixedNotes.add(barCopied.get(indexChanged));
+			barCopied.get(indexChanged).setDuration(dur1);
+			fixBarDurationforMutation(barCopied, fixedNotes, Constants.BAR_TEMPO);
+			i.getTrack().setNoteSequence(switchBar(changed.getMeasure(), i.getTrack().getNoteSequence(), barCopied));
+			i.getTrack().rebuildMeasure();
 			
+			if(changed.getMeasure() == 30)
+				return i;
+			changed.setMeasure(changed.getMeasure()+1);
+			
+			bar = pickCurrentBar(i.getTrack().getNoteSequence(), changed);
+			if(bar.size() == 0)
+				System.out.println("Ops");
+			barCopied = Track.copyNoteSequence(bar);
+			dur1 = iAux.randomDuration();
+			indexBar = i.getTrack().getNoteSequence().indexOf(bar.get(0));
+			indexChanged = 0;
+			fixedNotes = new ArrayList<NoteHerremans>();
+			fixedNotes.add(barCopied.get(indexChanged));
+			barCopied.get(indexChanged).setDuration(dur1);
+			fixBarDurationforMutation(barCopied, fixedNotes, Constants.BAR_TEMPO);
+			i.getTrack().setNoteSequence(switchBar(changed.getMeasure(), i.getTrack().getNoteSequence(), barCopied));
+			i.getTrack().rebuildMeasure();
 		}
 		return i;
 		
@@ -293,6 +319,12 @@ public class Mutation {
 	public static Individual mutateMelodicAndRhythmTrigram (Individual i) {
 		mutateMelodicTrigram(i);
 		mutateRhythmTrigram(i);
+		return i;
+	}
+	
+	public static Individual mutateMelodicAndRhythmTrigramBar (Individual i) {
+		mutateMelodicTrigram(i);
+		mutateRhythmTrigramBar(i);
 		return i;
 	}
 	

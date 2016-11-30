@@ -8,11 +8,14 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Random;
 
+import javax.security.auth.callback.ChoiceCallback;
+
 import Comparators.IndividualComparatorByObjective;
 import Comparators.IndividualComparatorCrowdingDistance;
 import Comparators.IndividualComparatorNonDominationRank;
 import Constants.MutationConstants;
 import JMusicTools.FileTools;
+import NoteEnconding.NoteHerremans;
 import NoteEnconding.Track;
 
 public class GeneticAlgorithm {
@@ -255,7 +258,9 @@ public class GeneticAlgorithm {
 		fastNonDominatedSort(getPopulation());
 		crowdingDistance(getPopulation());
 		for (int i = 0;i < getGenerations(); i++) {
-			if(i%300==0) 
+			//if (i%25 == 0 && i < 101)
+				//exportFrontVectors(i);
+			if(i%(getGenerations()/5)==0) 
 				System.out.println("Geração: " + i + " pop: " + getPopulation().size());
 			if(getPopulation().size() <getPopulationLength())
 				System.out.println("Erro no tamanho da pop");
@@ -265,17 +270,38 @@ public class GeneticAlgorithm {
 				if (r.nextFloat() < getCrossOverRate()) {
 					Individual i1 = Selection.selection(getPopulation(),getSelectionMethod()).clone();
 					Individual i2 = Selection.selection(getPopulation(),getSelectionMethod()).clone();
+					while (checkIndividualEquality(i1, i2)) {
+						i2 = Selection.selection(getPopulation(),getSelectionMethod()).clone();
+					}
+					
 					Individual[] ii = CrossOver.crossOver(i1, i2, getMusicLengthBar(), getCrossOverMethod());
+					//while (checkIndividualEquality(ii[0], i1) || checkIndividualEquality(ii[0], i2)) {
+						//ii = CrossOver.crossOver(i1, i2, getMusicLengthBar(), getCrossOverMethod());
+					//}
 					Fitness.fitness(ii[0], getFitnessMethod());
 					Fitness.fitness(ii[1], getFitnessMethod());
 					if(ii[0].fitnesses[0] == 0.0 || ii[0].fitnesses[1] == 0.0)
 						System.out.println("errorCrossOver");
 					if (offSpring.size() < getPopulationLength() -1) {
-						offSpring.add(ii[0]);
-						offSpring.add(ii[1]);					}
+											
+						//if(!existTwin(ii[0], getPopulation())) 
+							offSpring.add(ii[0]);
+						//if(!existTwin(ii[1], getPopulation()))
+							offSpring.add(ii[1]);
+						/*if(existTwin(ii[0], getPopulation())) {
+							//System.out.println("bug");
+						}
+						if(existTwin(ii[1], getPopulation())) {
+							//System.out.println("bug");
+						}*/
+							
+					}
 					else {
-						offSpring.add(ii[0]);
-						break;
+						//if(!existTwin(ii[0], getPopulation())) 
+							offSpring.add(ii[0]);
+						/*if(existTwin(ii[0], getPopulation()));
+							//System.out.println("bug");
+						break;*/
 					}
 				}
 				if(r.nextFloat() < getMutationRate()) {
@@ -285,24 +311,27 @@ public class GeneticAlgorithm {
 					if (offSpring.size() < getPopulationLength()) {
 						Individual i2 = Mutation.mutation(i1, getMutationMethod()).clone();
 						Fitness.fitness(i2, getFitnessMethod());
-						offSpring.add(i2);
+						//if (!checkIndividualEquality(i1, i2)) {
+							offSpring.add(i2);
+							/*if(offSpring.get(offSpring.size()-1).fitnesses[0] == 0.0)
+								System.out.println("errorMutation");*/
+						//}
+				//		existTwin(i2, getPopulation());
 						
-						if(offSpring.get(offSpring.size()-1).fitnesses[0] == 0.0)
-							System.out.println("errorMutation");
 					}
 					else
 						break;
 				}
 			}
 			
-			seekErrorFitness("beforeAddAll");
+			//seekErrorFitness("beforeAddAll");
 			getPopulation().addAll(offSpring);
 			
-			seekErrorFitness("addAllOffSpring");
+			//seekErrorFitness("addAllOffSpring");
 			fastNonDominatedSort(getPopulation());
-			seekErrorFitness("fastNDSort");
+			//seekErrorFitness("fastNDSort");
 			crowdingDistance(getPopulation());
-			seekErrorFitness("crowDistance");
+			//seekErrorFitness("crowDistance");
 			Collections.sort(population, new IndividualComparatorNonDominationRank());
 			offSpring = new ArrayList<Individual>();
 			int initialNRank = getPopulation().get(0).getNonDominationRank();
@@ -336,6 +365,7 @@ public class GeneticAlgorithm {
 				//System.out.println(i + ": rank: " + offSpring.get(offSpring.size()-1).getNonDominationRank());
 			population = offSpring;
 		}
+		exportFrontVectors(populationLength);
 		return population;
 		
 	}
@@ -446,7 +476,7 @@ public class GeneticAlgorithm {
 	public ArrayList<Individual> returnFirstFront () {
 		fastNonDominatedSort(population);
 		Individual aux = population.get(0);
-		int lastIndexFront = getPopulationLength();
+		int lastIndexFront = getPopulation().size();
 		for (Individual i: population) {
 			if (i.getNonDominationRank() != aux.getNonDominationRank()) {
 				lastIndexFront = population.indexOf(i);
@@ -520,6 +550,47 @@ public class GeneticAlgorithm {
 			s +=  a.toString() + "\n";
 		}
 		FileTools.exportDatedFile(s, "multiObjFront", "F_"+firstFront.get(0).getTrack().getName());
+	}
+	
+	public boolean  checkIndividualEquality(Individual i1, Individual i2) {
+		//System.out.println("What?");
+		for (NoteHerremans nh: i1.getTrack().getNoteSequence()) {
+			if (nh.getMidiPitch() == i2.getTrack().getNoteSequence().get(i1.getTrack().getNoteSequence().indexOf(nh)).getMidiPitch()) {
+				if (nh.getDuration() == i2.getTrack().getNoteSequence().get(i1.getTrack().getNoteSequence().indexOf(nh)).getDuration()) {
+					//System.out.println("YEah");
+				}
+				else {
+					return false;
+				}
+			}
+			else {
+				return false;
+			}
+				
+		}
+		return true;
+	}
+	
+	public boolean existTwin (Individual i2, ArrayList<Individual> iList) {
+		for (Individual i: iList) {
+			if (checkIndividualEquality(i2, i) == true)
+				return true;
+		}
+		return false;
+	}
+	
+	public void exportFrontVectors (int it) {
+		ArrayList<Individual> pop = new ArrayList<Individual>(getPopulation());
+		int i = 1;
+		while (!population.isEmpty()) {
+			ArrayList<Individual> front = returnFirstFront();
+			this.population = new ArrayList<Individual>(population.subList(front.size(), population.size()));
+			Collections.sort(front, new IndividualComparatorByObjective(0));
+			FileTools.writeFrontToFile(front, i, it);
+			i++;
+		}
+		setPopulation(pop);
+		fastNonDominatedSort(population);
 	}
 	
 	

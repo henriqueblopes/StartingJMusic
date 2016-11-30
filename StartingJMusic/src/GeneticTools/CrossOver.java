@@ -32,9 +32,10 @@ public abstract class CrossOver {
 		return null;	
 	}
 	public static Individual[] crossOverBar(Individual i1, Individual i2, int musicLengthBar) {
+		
 		Individual[] crossedOver = new Individual[2];
 		Random r = new Random();
-		int a = r.nextInt(musicLengthBar-1);
+		int a = r.nextInt(musicLengthBar-2);
 		a += 1;
 		
 		ArrayList<NoteHerremans> nh1 = new ArrayList();
@@ -67,7 +68,7 @@ public abstract class CrossOver {
 		crossedOver[0] = new Individual(taux, i1.getGenerationType());
 		taux = new Track("M_"+(d.getYear()+1900)+"_"+(d.getMonth()+1)+"_"+d.getDate()+"_"+d.getHours()+"_"+d.getMinutes()+"_"+d.getSeconds()+".mid");
 		taux.setNoteSequence(new ArrayList<NoteHerremans>(nh2));
-		crossedOver[1] = new Individual(taux, i1.getGenerationType());
+		crossedOver[1] = new Individual(taux, i1.getGenerationType());			
 		return crossedOver;
 	}
 	

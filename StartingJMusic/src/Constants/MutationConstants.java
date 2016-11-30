@@ -23,6 +23,7 @@ public  final class MutationConstants {
 	public static final String  MUTATE_COPYING_PART_MUSIC_BAR = "mutateCopyingPartMusicBar";
 	public static final String CHANGE_ONE_NOTE_BAR = "changeOneNoteBar";
 	public static final String MUTATE_RHYTHM_TRIGRAM_BAR = "mutateRhythmTrigramBar";
+	public static final String MUTATE_MELODIC_AND_RHYTHM_TRIGRAM_BAR = "mutateMelodicAndRhythmTrigramBar";
 	public static final String SPLIT_OR_JOIN_NOTE_DURATION = "splitOrJoinNoteDuration";
 	
 	public static final String MIX_MUTATION_TEST = "mixMutationTest";
