@@ -40,7 +40,7 @@ public abstract class FileTools {
 		StringTokenizer st = new StringTokenizer(content, "\n");
 	}
 	
-	public static void writeFrontToFile (ArrayList<Individual> firstFront, int n, int it) {
+	public static void writeFrontToFile (ArrayList<Individual> firstFront, int n, int it, String midname) {
 		//Collections.sort(firstFront, new IndividualComparatorByObjective(0));
 		String s = new String();
 		for (Individual i: firstFront) {
@@ -49,7 +49,7 @@ public abstract class FileTools {
 			a = i.fitnesses[1];
 			s +=  a.toString() + "\n";
 		}
-		FileTools.exportDatedFile(s, "testMultiObjFront", it+"F_"+n);
+		FileTools.exportDatedFile(s, "testMultiObjFront", +it+"F_"+n + midname);
 	}
 	
 	

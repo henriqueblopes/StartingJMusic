@@ -13,6 +13,7 @@ import javax.security.auth.callback.ChoiceCallback;
 import Comparators.IndividualComparatorByObjective;
 import Comparators.IndividualComparatorCrowdingDistance;
 import Comparators.IndividualComparatorNonDominationRank;
+import Constants.FitnessConstants;
 import Constants.MutationConstants;
 import JMusicTools.FileTools;
 import NoteEnconding.NoteHerremans;
@@ -31,12 +32,13 @@ public class GeneticAlgorithm {
 	private String mutationMethod;
 	private ArrayList<Double> convergence;
 	private String generationType;
+	private ArrayList<Individual> initialIndividuals;
 	//private Individual bestI;
 	
 	public GeneticAlgorithm (int populationLength, int generations,
 			double crossOverRate, double mutationRate, int musicLengthBar, String selectionMethod,
 			String crossOverMethod, String fitnessMethod, String mutationMethod,
-			String generationType) {
+			String generationType, ArrayList<Individual> initialIndividuals) {
 			
 		
 		this.setPopulation(new ArrayList<Individual>());
@@ -52,6 +54,8 @@ public class GeneticAlgorithm {
 		this.setMutationMethod(mutationMethod);
 		this.setGenerationType(generationType);
 		//this.bestI = new Individual(generationType);
+		this.setInitialIndividuals(initialIndividuals);
+		
 		
 	}
 
@@ -94,7 +98,7 @@ public class GeneticAlgorithm {
 		return population;
 	}
 
-	private void setPopulation(ArrayList<Individual> population) {
+	public void setPopulation(ArrayList<Individual> population) {
 		this.population = population;
 	}
 	
@@ -130,11 +134,11 @@ public class GeneticAlgorithm {
 		this.mutationMethod = mutationMethod;
 	}
 
-	private ArrayList<Double> getConvergence() {
+	public ArrayList<Double> getConvergence() {
 		return convergence;
 	}
 
-	private void setConvergence(ArrayList<Double> convergence) {
+	public void setConvergence(ArrayList<Double> convergence) {
 		this.convergence = convergence;
 	}
 
@@ -146,8 +150,18 @@ public class GeneticAlgorithm {
 		this.generationType = generationType;
 	}
 
+	private ArrayList<Individual> getInitialIndividuals() {
+		return initialIndividuals;
+	}
+
+	private void setInitialIndividuals(ArrayList<Individual> initialIndividuals) {
+		this.initialIndividuals = initialIndividuals;
+	}
+
 	public void initializeRandomPopulation() {
-		for (int i = 0; i < this.getPopulationLength(); i++) {
+		if (getInitialIndividuals() != null)
+			getPopulation().addAll(initialIndividuals);
+		while (getPopulation().size() < this.getPopulationLength()) {
 			Individual ind = new Individual(getMusicLengthBar(), getGenerationType());
 			ind.createTrack();
 			ind.getZipfMetrics().setZipfCountMethod(getFitnessMethod());
@@ -212,8 +226,16 @@ public class GeneticAlgorithm {
 		ArrayList<Individual> offSpring = new ArrayList<Individual>();
 		for (int i = 0;i < getGenerations(); i++) {
 			Individual maxIAux = returnMaxIndividual();
+			
+			if(!getFitnessMethod().equals(FitnessConstants.ZIPF_FITNESS))
+				maxIAux.getZipfMetrics().setZipfCountMethod(FitnessConstants.ZIPF_FITNESS_ERROR_FIT);
+			Fitness.fitness(maxIAux, FitnessConstants.MULTI_OBJECTIVE_FITNESS);
+			Fitness.fitness(maxIAux, getFitnessMethod());
+			getConvergence().add(new Double(maxIAux.fitnesses[0]));
+			getConvergence().add(new Double(maxIAux.fitnesses[1]));
+			
 			offSpring.add(maxIAux.clone());
-			getConvergence().add(new Double(maxIAux.getFitness()));
+			
 			if(i%(getGenerations()/5) == 0)
 				System.out.println("Geração  " + i);
 			
@@ -249,6 +271,7 @@ public class GeneticAlgorithm {
 			offSpring = new ArrayList<Individual>();
 		}
 		//getConvergence().add(returnMaxIndividual());
+		System.out.println("Otimização Terminada.");
 		return getPopulation();
 	}
 	
@@ -258,8 +281,9 @@ public class GeneticAlgorithm {
 		fastNonDominatedSort(getPopulation());
 		crowdingDistance(getPopulation());
 		for (int i = 0;i < getGenerations(); i++) {
-			//if (i%25 == 0 && i < 101)
-				//exportFrontVectors(i);
+			if (i%25 == 0 && i < 101)
+				exportFrontVectors(i);
+			
 			if(i%(getGenerations()/5)==0) 
 				System.out.println("Geração: " + i + " pop: " + getPopulation().size());
 			if(getPopulation().size() <getPopulationLength())
@@ -365,7 +389,8 @@ public class GeneticAlgorithm {
 				//System.out.println(i + ": rank: " + offSpring.get(offSpring.size()-1).getNonDominationRank());
 			population = offSpring;
 		}
-		exportFrontVectors(populationLength);
+		//exportFrontVectors(populationLength);
+		System.out.println("Otimização Multiobjetivo concluída.");
 		return population;
 		
 	}
@@ -428,7 +453,7 @@ public class GeneticAlgorithm {
 		calculateFrontCrowdingDistance(new ArrayList<Individual>(population.subList(initialNRank, population.size())));
 	}
 
-	private void fastNonDominatedSort(ArrayList<Individual> population) {
+	public void fastNonDominatedSort(ArrayList<Individual> population) {
 		ArrayList<Individual> firstFront = new ArrayList<Individual>();
 		for (Individual p: population) {
 			p.setDomination(new ArrayList<Individual>());
@@ -475,6 +500,7 @@ public class GeneticAlgorithm {
 	
 	public ArrayList<Individual> returnFirstFront () {
 		fastNonDominatedSort(population);
+		Collections.sort(population, new IndividualComparatorNonDominationRank());
 		Individual aux = population.get(0);
 		int lastIndexFront = getPopulation().size();
 		for (Individual i: population) {
@@ -486,16 +512,21 @@ public class GeneticAlgorithm {
 		return new ArrayList<Individual>(population.subList(0, lastIndexFront));
 	}
 	
-	public void exportConvergence () {
+	public void exportConvergence (String midName) {
 		String content = "";
+		int j =0;
 		for (Double i: getConvergence()) {
 			content += i.toString();
 			content += " ";
+			
+			if (j%2 ==1)
+				content += "\n";
+			j++;
 		}
 		
 		Date d = new Date(System.currentTimeMillis());
 	
-		File file = new File("Convergencia/convergence_"+(d.getYear()+1900)+"_"+(d.getMonth()+1)+"_"+d.getDate()+"_"+d.getHours()+"_"+d.getMinutes()+"_"+d.getSeconds()+".dat");
+		File file = new File("Convergencia/convergence_"+midName+(d.getYear()+1900)+"_"+(d.getMonth()+1)+"_"+d.getDate()+"_"+d.getHours()+"_"+d.getMinutes()+"_"+d.getSeconds()+".dat");
 		try {
 			if (!file.exists()) {
 				file.createNewFile();
@@ -586,11 +617,26 @@ public class GeneticAlgorithm {
 			ArrayList<Individual> front = returnFirstFront();
 			this.population = new ArrayList<Individual>(population.subList(front.size(), population.size()));
 			Collections.sort(front, new IndividualComparatorByObjective(0));
-			FileTools.writeFrontToFile(front, i, it);
+			FileTools.writeFrontToFile(front, i, it, "");
 			i++;
 		}
 		setPopulation(pop);
 		fastNonDominatedSort(population);
+	}
+	
+	public ArrayList<Individual> returnMusicsToListen (int amount, ArrayList<Individual> front) {
+		ArrayList<Individual> musicsToListen = new ArrayList<Individual>();
+		int i = 0;
+		Random r = new Random();
+		while (i < amount || front.isEmpty()) {
+			Individual ind = front.get(r.nextInt(front.size()));
+			if (!existTwin(ind, musicsToListen)) {
+				musicsToListen.add(ind);
+			}
+			front.remove(ind);
+			i++;
+		}
+		return musicsToListen;
 	}
 	
 	
