@@ -1,3 +1,10 @@
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -27,13 +34,15 @@ public final class Main implements JMC {
 	public static void main(String[] args){
 		
 		
+		//runGeneticConvergence(0, 33, FitnessConstants.ZIPF_FITNESS_ERROR_FIT, 0.9, 0.3, 1000, 300);
+		
 		
 		//evalRandomInvididual();
 		//testPerformanceFitness();
 		//pcaInput();
 		//evalInputMusic();
-		/*ArrayList<Individual> iArray = new ArrayList<Individual>();
-		for (int i =0; i< 2; i++) {
+		ArrayList<Individual> iArray = new ArrayList<Individual>();
+		/*for (int i =0; i< 2; i++) {
 			Individual ind = runGenetic(0, 1, FitnessConstants.ZIPF_FITNESS_ERROR_FIT);
 			ind.getZipfMetrics().setZipfCountMethod(FitnessConstants.ZIPF_FITNESS_ERROR_FIT);
 			Fitness.fitness(ind, FitnessConstants.MULTI_OBJECTIVE_FITNESS);
@@ -44,8 +53,8 @@ public final class Main implements JMC {
 			ind.getZipfMetrics().setZipfCountMethod(FitnessConstants.ZIPF_FITNESS_ERROR_FIT);
 			Fitness.fitness(ind, FitnessConstants.MULTI_OBJECTIVE_FITNESS);
 			iArray.add(ind);
-		}
-		runNSGA2(0, 1, iArray);*/
+		}*/
+		//runNSGA2(0, 1, iArray);
 		//runNSGA2(0, 1, null);
 		//runNSGA2(1, 10);
 		//generateMassPopulation(10000, 30, Constants.BAR_REMAINING_DURATION, FitnessConstants.MULTI_OBJECTIVE_FITNESS);
@@ -60,37 +69,78 @@ public final class Main implements JMC {
 		writeObjectivesMusic(bestZipf, "zipf", 33+"_p"+300+"_c"+0.9+"_m"+0.3);
 		runNSGAIIParetoCombined(0, 3, initPop, FitnessConstants.MULTI_OBJECTIVE_FITNESS, 0.9, 0.3, 50, 100);*/
 		
-		runNSGAIIParetoCombined(0, 33, null, FitnessConstants.MULTI_OBJECTIVE_FITNESS, 0.9, 0.3, 1000, 300);
-		ArrayList<Individual> bestFux = runGeneticConvergence(0, 33, FitnessConstants.FUX_FITNESS, 0.9, 0.3, 1000, 300);
+		/*ArrayList<Individual> bestFux = runGeneticConvergence(0, 33, FitnessConstants.FUX_FITNESS, 0.9, 0.3, 1000, 300);
 		ArrayList<Individual> bestZipf = runGeneticConvergence(0, 33, FitnessConstants.ZIPF_FITNESS_ERROR_FIT, 0.9, 0.3, 1000, 300);
 		ArrayList<Individual> initPop = new ArrayList<Individual>();
+		initPop.addAll(bestFux);
+		initPop.addAll(bestZipf);
+		ObjectOutputStream objectOut;
+		try {
+			objectOut = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("initPop.dat")));
+			objectOut.writeObject(initPop);
+			objectOut.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+		ArrayList<Individual> bestFux = new ArrayList<Individual>();
+		ArrayList<Individual> bestZipf = new ArrayList<Individual>();
+		ArrayList<Individual> initPop = new ArrayList<Individual>();
+		
+		
+		/*ObjectInputStream objectIn;
+		try {
+			objectIn = new ObjectInputStream(new BufferedInputStream(new FileInputStream("initPop.dat")));
+			ArrayList<Individual> initPopIn = (ArrayList<Individual>) objectIn.readObject();
+			objectIn.close();
+			bestFux = new ArrayList<Individual>(initPopIn.subList(0, 33));
+			bestZipf = new ArrayList<Individual>(initPopIn.subList(33, 66));
+			writeObjectivesMusic(bestFux, "fux", "_fux"+33+"_p"+300+"_c"+0.9+"_m"+0.1);
+			writeObjectivesMusic(bestZipf, "zipf", "_zipf"+33+"_p"+300+"_c"+0.9+"_m"+0.1);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+		
+		
+		
+		
+		//bestFux = runGeneticConvergence(0, 33, FitnessConstants.FUX_FITNESS, 0.9, 0.3, 1000, 300);
+		/*
+		runNSGAIIParetoCombined(0, 33, null, FitnessConstants.MULTI_OBJECTIVE_FITNESS, 0.9, 0.3, 1000, 300);
+		bestFux = runGeneticConvergence(0, 33, FitnessConstants.FUX_FITNESS, 0.9, 0.3, 1000, 300);
+		bestZipf = runGeneticConvergence(0, 33, FitnessConstants.ZIPF_FITNESS_ERROR_FIT, 0.9, 0.3, 1000, 300);
+		initPop = new ArrayList<Individual>();
 		initPop.addAll(bestFux);
 		initPop.addAll(bestZipf);
 		evalMultObjInidividuals(initPop, FitnessConstants.ZIPF_FITNESS_ERROR_FIT);
 		writeObjectivesMusic(bestFux, "fux", 33+"_p"+300+"_c"+0.9+"_m"+0.3);
 		writeObjectivesMusic(bestZipf, "zipf", 33+"_p"+300+"_c"+0.9+"_m"+0.3);
-		runNSGAIIParetoCombined(0, 33, initPop, FitnessConstants.MULTI_OBJECTIVE_FITNESS, 0.9, 0.3, 1000, 300);
+		runNSGAIIParetoCombined(0, 33, initPop, FitnessConstants.MULTI_OBJECTIVE_FITNESS, 0.9, 0.3, 1000, 300);*/
 		
-		runNSGAIIParetoCombined(0, 33, null, FitnessConstants.MULTI_OBJECTIVE_FITNESS, 0.9, 0.1, 1000, 300);
-		bestFux = runGeneticConvergence(0, 33, FitnessConstants.FUX_FITNESS, 0.9, 0.1, 1000, 300);
+		//runNSGAIIParetoCombined(0, 33, null, FitnessConstants.MULTI_OBJECTIVE_FITNESS, 0.9, 0.1, 1000, 300);
+		/*bestFux = runGeneticConvergence(0, 33, FitnessConstants.FUX_FITNESS, 0.9, 0.1, 1000, 300);
 		bestZipf = runGeneticConvergence(0, 33, FitnessConstants.ZIPF_FITNESS_ERROR_FIT, 0.9, 0.1, 1000, 300);
 		initPop = new ArrayList<Individual>();
 		initPop.addAll(bestFux);
 		initPop.addAll(bestZipf);
 		evalMultObjInidividuals(initPop, FitnessConstants.ZIPF_FITNESS_ERROR_FIT);
-		writeObjectivesMusic(bestFux, "fux", 33+"_p"+300+"_c"+0.9+"_m"+0.1);
-		writeObjectivesMusic(bestZipf, "zipf", 33+"_p"+300+"_c"+0.9+"_m"+0.1);
+		writeObjectivesMusic(bestFux, "fux", "_fux"+33+"_p"+300+"_c"+0.9+"_m"+0.1);
+		writeObjectivesMusic(bestZipf, "zipf", "_zipf"+33+"_p"+300+"_c"+0.9+"_m"+0.1);
 		runNSGAIIParetoCombined(0, 33, initPop, FitnessConstants.MULTI_OBJECTIVE_FITNESS, 0.9, 0.1, 1000, 300);
 		
-		runNSGAIIParetoCombined(0, 33, null, FitnessConstants.MULTI_OBJECTIVE_FITNESS, 0.7, 0.3, 1000, 300);
+		//runNSGAIIParetoCombined(0, 33, null, FitnessConstants.MULTI_OBJECTIVE_FITNESS, 0.7, 0.3, 1000, 300);
 		bestFux = runGeneticConvergence(0, 33, FitnessConstants.FUX_FITNESS, 0.7, 0.3, 1000, 300);
 		bestZipf = runGeneticConvergence(0, 33, FitnessConstants.ZIPF_FITNESS_ERROR_FIT, 0.7, 0.3, 1000, 300);
 		initPop = new ArrayList<Individual>();
 		initPop.addAll(bestFux);
 		initPop.addAll(bestZipf);
 		evalMultObjInidividuals(initPop, FitnessConstants.ZIPF_FITNESS_ERROR_FIT);
-		writeObjectivesMusic(bestFux, "fux", 33+"_p"+300+"_c"+0.7+"_m"+0.3);
-		writeObjectivesMusic(bestZipf, "zipf", 33+"_p"+300+"_c"+0.7+"_m"+0.3);
+		writeObjectivesMusic(bestFux, "fux", "_fux"+33+"_p"+300+"_c"+0.7+"_m"+0.3);
+		writeObjectivesMusic(bestZipf, "zipf", "_zipf"+33+"_p"+300+"_c"+0.7+"_m"+0.3);
 		runNSGAIIParetoCombined(0, 33, initPop, FitnessConstants.MULTI_OBJECTIVE_FITNESS, 0.7, 0.3, 1000, 300);
 		
 		runNSGAIIParetoCombined(0, 33, null, FitnessConstants.MULTI_OBJECTIVE_FITNESS, 0.7, 0.1, 1000, 300);
@@ -100,15 +150,67 @@ public final class Main implements JMC {
 		initPop.addAll(bestFux);
 		initPop.addAll(bestZipf);
 		evalMultObjInidividuals(initPop, FitnessConstants.ZIPF_FITNESS_ERROR_FIT);
-		writeObjectivesMusic(bestFux, "fux", 33+"_p"+300+"_c"+0.7+"_m"+0.1);
-		writeObjectivesMusic(bestZipf, "zipf", 33+"_p"+300+"_c"+0.7+"_m"+0.1);
+		writeObjectivesMusic(bestFux, "fux", "_fux"+33+"_p"+300+"_c"+0.7+"_m"+0.1);
+		writeObjectivesMusic(bestZipf, "zipf", "_zipf"+33+"_p"+300+"_c"+0.7+"_m"+0.1);
 		runNSGAIIParetoCombined(0, 33, initPop, FitnessConstants.MULTI_OBJECTIVE_FITNESS, 0.7, 0.1, 1000, 300);
 		
+		
+		bestFux = runGeneticConvergence(0, 20, FitnessConstants.FUX_FITNESS, 0.9, 0.3, 4000, 300);
+		bestZipf = runGeneticConvergence(0, 20, FitnessConstants.ZIPF_FITNESS_ERROR_FIT, 0.9, 0.3, 4000, 300);
+		writeObjectivesMusic(bestFux, "fux", 20+"_p"+300+"_c"+0.9+"_m"+0.3);
+		writeObjectivesMusic(bestZipf, "zipf", 20+"_p"+300+"_c"+0.9+"_m"+0.3);
+
+		runNSGAIIParetoCombined(0, 33, null, FitnessConstants.MULTI_OBJECTIVE_FITNESS, 0.9, 0.3, 1000, 600);
+		bestFux = runGeneticConvergence(0, 33, FitnessConstants.FUX_FITNESS, 0.9, 0.3, 1000, 600);
+		bestZipf = runGeneticConvergence(0, 33, FitnessConstants.ZIPF_FITNESS_ERROR_FIT, 0.9, 0.3, 1000, 600);
+		initPop = new ArrayList<Individual>();
+		initPop.addAll(bestFux);
+		initPop.addAll(bestZipf);
+		evalMultObjInidividuals(initPop, FitnessConstants.ZIPF_FITNESS_ERROR_FIT);
+		writeObjectivesMusic(bestFux, "fux", 33+"_p"+600+"_c"+0.9+"_m"+0.3);
+		writeObjectivesMusic(bestZipf, "zipf", 33+"_p"+600+"_c"+0.9+"_m"+0.3);
+		runNSGAIIParetoCombined(0, 33, initPop, FitnessConstants.MULTI_OBJECTIVE_FITNESS, 0.9, 0.3, 1000, 600);
+		
+		runNSGAIIParetoCombined(0, 33, null, FitnessConstants.MULTI_OBJECTIVE_FITNESS, 0.9, 0.1, 1000, 600);
+		bestFux = runGeneticConvergence(0, 1, FitnessConstants.FUX_FITNESS, 0.9, 0.1, 100, 600);
+		bestZipf = runGeneticConvergence(0, 1, FitnessConstants.ZIPF_FITNESS_ERROR_FIT, 0.9, 0.1, 10, 600);
+		initPop = new ArrayList<Individual>();
+		initPop.addAll(bestFux);
+		initPop.addAll(bestZipf);
+		evalMultObjInidividuals(initPop, FitnessConstants.ZIPF_FITNESS_ERROR_FIT);
+		writeObjectivesMusic(bestFux, "fux", "_fux"+33+"_p"+600+"_c"+0.9+"_m"+0.1);
+		writeObjectivesMusic(bestZipf, "zipf", "_zipf"+33+"_p"+600+"_c"+0.9+"_m"+0.1);
+		runNSGAIIParetoCombined(0, 33, initPop, FitnessConstants.MULTI_OBJECTIVE_FITNESS, 0.9, 0.1, 1000, 600);
+		
+		runNSGAIIParetoCombined(0, 33, null, FitnessConstants.MULTI_OBJECTIVE_FITNESS, 0.7, 0.3, 1000, 600);
+		bestFux = runGeneticConvergence(0, 33, FitnessConstants.FUX_FITNESS, 0.7, 0.3, 1000, 600);
+		bestZipf = runGeneticConvergence(0, 33, FitnessConstants.ZIPF_FITNESS_ERROR_FIT, 0.7, 0.3, 1000, 600);
+		initPop = new ArrayList<Individual>();
+		initPop.addAll(bestFux);
+		initPop.addAll(bestZipf);
+		evalMultObjInidividuals(initPop, FitnessConstants.ZIPF_FITNESS_ERROR_FIT);
+		writeObjectivesMusic(bestFux, "fux", "_fux"+33+"_p"+600+"_c"+0.7+"_m"+0.3);
+		writeObjectivesMusic(bestZipf, "zipf", "_zipf"+33+"_p"+600+"_c"+0.7+"_m"+0.3);
+		runNSGAIIParetoCombined(0, 33, initPop, FitnessConstants.MULTI_OBJECTIVE_FITNESS, 0.7, 0.3, 1000, 600);
+		
+		runNSGAIIParetoCombined(0, 33, null, FitnessConstants.MULTI_OBJECTIVE_FITNESS, 0.7, 0.1, 1000, 600);
+		bestFux = runGeneticConvergence(0, 33, FitnessConstants.FUX_FITNESS, 0.7, 0.1, 1000, 600);
+		bestZipf = runGeneticConvergence(0, 33, FitnessConstants.ZIPF_FITNESS_ERROR_FIT, 0.7, 0.1, 1000, 600);
+		initPop = new ArrayList<Individual>();
+		initPop.addAll(bestFux);
+		initPop.addAll(bestZipf);
+		evalMultObjInidividuals(initPop, FitnessConstants.ZIPF_FITNESS_ERROR_FIT);
+		writeObjectivesMusic(bestFux, "fux", "_fux"+33+"_p"+600+"_c"+0.7+"_m"+0.1);
+		writeObjectivesMusic(bestZipf, "zipf", "_zipf"+33+"_p"+600+"_c"+0.7+"_m"+0.1);
+		runNSGAIIParetoCombined(0, 33, initPop, FitnessConstants.MULTI_OBJECTIVE_FITNESS, 0.7, 0.1, 1000, 600);
+*/		
 		/*ArrayList<Individual> iArray = new ArrayList<Individual>();
 		for (int i =0; i< 6; i++)
 			iArray.add(runGenetic(0, 1));
 		writeObjectivesMusic(iArray, "fux");*/
 		//runGenetic(1, 1);
+		
+		//generateRandomInvididuals(3);
 		
 	}
 	
@@ -373,9 +475,9 @@ public final class Main implements JMC {
 			System.out.println("Fitness: " + i.fitnesses[0] +  " " +i.fitnesses[1]);
 		}
 		if (fitnessUsed.equals("fux"))
-			FileTools.writeFrontToFile(iArray, 1, -1, midname);
+			FileTools.writeFrontToFile(iArray, 1, 1, midname);
 		else
-			FileTools.writeFrontToFile(iArray, 1, -2, midname);
+			FileTools.writeFrontToFile(iArray, 1, 2, midname);
 	}
 	
 	public static void evalInputMusic () {
@@ -438,6 +540,22 @@ public final class Main implements JMC {
 		i1.getZipfMetrics().setZipfCountMethod(fit);
 		//i1.getZipfMetrics().pitchBigramMetricCalculator(i1.getTrack());
 		Fitness.fitness(i1, fit);
+		//printCoefFitness(i1);
+		//i1.getTrack().trackToScaleMidi(0, fitness+mutation);
+		//i1.getTrack().trackToMidi("");
+		//i1.getZipfMetrics().writeZipfData(i1.getTrack());
+		
+	}
+	
+	public static void generateRandomInvididuals (int n) {
+		for (int i = 0; i<n; i++) {
+			Individual i1 = new Individual(30, Constants.BAR_REMAINING_DURATION);
+			i1.createTrack();
+			i1.getTrack().setName("randomMelody"+(i+1)+".mid");
+			i1.getTrack().trackToMidi("RandomMelodies");
+		}
+		
+		
 		//printCoefFitness(i1);
 		//i1.getTrack().trackToScaleMidi(0, fitness+mutation);
 		//i1.getTrack().trackToMidi("");

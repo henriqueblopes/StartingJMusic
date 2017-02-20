@@ -1,7 +1,8 @@
 package NoteEnconding;
+import java.io.Serializable;
 import java.math.*;
 import java.util.Comparator;
-public class NoteHerremans {
+public class NoteHerremans implements Serializable {
 	private int midiPitch; //valor midi da nota (inteiro que a representa no formato midi)
 	private double duration; //duração em número de batimentos
 	private int measure; //compasso que a nota está

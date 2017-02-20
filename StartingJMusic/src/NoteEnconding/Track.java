@@ -1,5 +1,6 @@
 package NoteEnconding;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import Constants.Constants;
@@ -12,7 +13,7 @@ import jm.music.data.Score;
 import jm.util.Read;
 import jm.util.Write;
 
-public class Track implements JMC{
+public class Track implements JMC, Serializable {
 	private double bpm = 185;
 	private String name;
 	ArrayList<NoteHerremans> noteSequence;

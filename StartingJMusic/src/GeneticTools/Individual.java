@@ -1,5 +1,6 @@
 package GeneticTools;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
@@ -10,7 +11,7 @@ import Metrics.ZipfMetrics;
 import NoteEnconding.NoteHerremans;
 import NoteEnconding.Track;
 
-public class Individual {
+public class Individual implements Serializable{
 	private Track track;
 	private double fitness;
 	private int musicLengthBars;

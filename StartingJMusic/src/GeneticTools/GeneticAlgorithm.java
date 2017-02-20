@@ -159,8 +159,14 @@ public class GeneticAlgorithm {
 	}
 
 	public void initializeRandomPopulation() {
-		if (getInitialIndividuals() != null)
-			getPopulation().addAll(initialIndividuals);
+		if (getInitialIndividuals() != null) {
+			for (Individual i: initialIndividuals) {
+				Individual aux = i.clone();
+				Fitness.fitness(aux, getFitnessMethod());
+				getPopulation().add(aux);
+			}
+		}
+			
 		while (getPopulation().size() < this.getPopulationLength()) {
 			Individual ind = new Individual(getMusicLengthBar(), getGenerationType());
 			ind.createTrack();
@@ -297,15 +303,14 @@ public class GeneticAlgorithm {
 					while (checkIndividualEquality(i1, i2)) {
 						i2 = Selection.selection(getPopulation(),getSelectionMethod()).clone();
 					}
-					
 					Individual[] ii = CrossOver.crossOver(i1, i2, getMusicLengthBar(), getCrossOverMethod());
 					//while (checkIndividualEquality(ii[0], i1) || checkIndividualEquality(ii[0], i2)) {
 						//ii = CrossOver.crossOver(i1, i2, getMusicLengthBar(), getCrossOverMethod());
 					//}
 					Fitness.fitness(ii[0], getFitnessMethod());
 					Fitness.fitness(ii[1], getFitnessMethod());
-					if(ii[0].fitnesses[0] == 0.0 || ii[0].fitnesses[1] == 0.0)
-						System.out.println("errorCrossOver");
+					/*if(ii[0].fitnesses[0] == 0.0 || ii[0].fitnesses[1] == 0.0)
+						System.out.println("errorCrossOver");*/
 					if (offSpring.size() < getPopulationLength() -1) {
 											
 						//if(!existTwin(ii[0], getPopulation())) 
@@ -633,8 +638,10 @@ public class GeneticAlgorithm {
 			if (!existTwin(ind, musicsToListen)) {
 				musicsToListen.add(ind);
 			}
-			front.remove(ind);
-			i++;
+			else {
+				front.remove(ind);
+				i++;
+			}
 		}
 		return musicsToListen;
 	}

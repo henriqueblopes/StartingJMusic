@@ -8,6 +8,7 @@ import GeneticTools.Mutation;
 import JMusicTools.FileTools;
 import NoteEnconding.NoteHerremans;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ import org.apache.commons.math3.stat.regression.SimpleRegression;
 
 import NoteEnconding.Track;
 
-public class ZipfMetrics {
+public class ZipfMetrics implements Serializable{
 	
 	//private ArrayList<NoteHerremans> pitchDistances;
 	private ArrayList<NoteHerremans> chromaticPitchs;
