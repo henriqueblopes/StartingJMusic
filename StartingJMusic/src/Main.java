@@ -41,7 +41,7 @@ public final class Main implements JMC {
 		//testPerformanceFitness();
 		//pcaInput();
 		//evalInputMusic();
-		ArrayList<Individual> iArray = new ArrayList<Individual>();
+		//ArrayList<Individual> iArray = new ArrayList<Individual>();
 		/*for (int i =0; i< 2; i++) {
 			Individual ind = runGenetic(0, 1, FitnessConstants.ZIPF_FITNESS_ERROR_FIT);
 			ind.getZipfMetrics().setZipfCountMethod(FitnessConstants.ZIPF_FITNESS_ERROR_FIT);
@@ -104,22 +104,53 @@ public final class Main implements JMC {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
+		String mutation = MutationConstants.MUTATE_MELODIC_AND_RHYTHM_TRIGRAM_BAR;
 		
 		
-		
-		
-		//bestFux = runGeneticConvergence(0, 33, FitnessConstants.FUX_FITNESS, 0.9, 0.3, 1000, 300);
-		/*
-		runNSGAIIParetoCombined(0, 33, null, FitnessConstants.MULTI_OBJECTIVE_FITNESS, 0.9, 0.3, 1000, 300);
-		bestFux = runGeneticConvergence(0, 33, FitnessConstants.FUX_FITNESS, 0.9, 0.3, 1000, 300);
-		bestZipf = runGeneticConvergence(0, 33, FitnessConstants.ZIPF_FITNESS_ERROR_FIT, 0.9, 0.3, 1000, 300);
+		//runNSGAIIParetoCombined(1, 15, initPop, FitnessConstants.MULTI_OBJECTIVE_FITNESS, 0.7, 0.3, 100, 50, mutation);
+		//mutation = MutationConstants.MUTATE_COPYING_PART_MUSIC_BAR;
+		/*bestFux = runGeneticConvergence(1, 33, FitnessConstants.FUX_FITNESS, 0.7, 0.3, 1000, 300, mutation);
+		bestZipf = runGeneticConvergence(1, 33, FitnessConstants.ZIPF_FITNESS_ERROR_FIT, 0.7, 0.3, 1000, 300, mutation);
 		initPop = new ArrayList<Individual>();
 		initPop.addAll(bestFux);
 		initPop.addAll(bestZipf);
 		evalMultObjInidividuals(initPop, FitnessConstants.ZIPF_FITNESS_ERROR_FIT);
-		writeObjectivesMusic(bestFux, "fux", 33+"_p"+300+"_c"+0.9+"_m"+0.3);
-		writeObjectivesMusic(bestZipf, "zipf", 33+"_p"+300+"_c"+0.9+"_m"+0.3);
-		runNSGAIIParetoCombined(0, 33, initPop, FitnessConstants.MULTI_OBJECTIVE_FITNESS, 0.9, 0.3, 1000, 300);*/
+		writeObjectivesMusic(bestFux, "fux", 33+"_p"+300+"_c"+0.7+"_m"+0.3);
+		writeObjectivesMusic(bestZipf, "zipf", 33+"_p"+300+"_c"+0.7+"_m"+0.3);
+		runNSGAIIParetoCombined(1, 33, initPop, FitnessConstants.MULTI_OBJECTIVE_FITNESS, 0.7, 0.3, 1000, 300, mutation);*/
+		
+		
+		mutation = MutationConstants.MUTATE_COPYING_PART_MUSIC_BAR;
+		/*bestFux = runGeneticConvergence(0, 2, FitnessConstants.FUX_FITNESS, 0.7, 0.3, 1000, 300, mutation);
+		bestZipf = runGeneticConvergence(0, 2, FitnessConstants.ZIPF_FITNESS_ERROR_FIT, 0.7, 0.3, 1000, 300, mutation);
+		initPop = new ArrayList<Individual>();
+		initPop.addAll(bestFux);
+		initPop.addAll(bestZipf);
+		evalMultObjInidividuals(initPop, FitnessConstants.ZIPF_FITNESS_ERROR_FIT);
+		//writeObjectivesMusic(bestFux, "fux", 2+"_p"+300+"_c"+0.7+"_m"+0.3);
+		//writeObjectivesMusic(bestZipf, "zipf", 2+"_p"+300+"_c"+0.7+"_m"+0.3);
+		runNSGAIIParetoCombined(0, 2, initPop, FitnessConstants.MULTI_OBJECTIVE_FITNESS, 0.7, 0.3, 1000, 300, mutation);*/
+		
+		bestFux = runGeneticConvergence(0, 33, FitnessConstants.FUX_FITNESS, 0.7, 0.3, 1000, 300, mutation);
+		bestZipf = runGeneticConvergence(0, 33, FitnessConstants.ZIPF_FITNESS_ERROR_FIT, 0.7, 0.3, 1000, 300, mutation);
+		initPop = new ArrayList<Individual>();
+		initPop.addAll(bestFux);
+		initPop.addAll(bestZipf);
+		evalMultObjInidividuals(initPop, FitnessConstants.ZIPF_FITNESS_ERROR_FIT);
+		writeObjectivesMusic(bestFux, "fux", 33+"_p"+300+"_c"+0.7+"_m"+0.3);
+		writeObjectivesMusic(bestZipf, "zipf", 33+"_p"+300+"_c"+0.7+"_m"+0.3);
+		runNSGAIIParetoCombined(0, 33, initPop, FitnessConstants.MULTI_OBJECTIVE_FITNESS, 0.7, 0.3, 1000, 300, mutation);
+		
+		
+		/*bestFux = runGeneticConvergence(1, 33, FitnessConstants.FUX_FITNESS, 0.7, 0.3, 1000, 300, mutation);
+		bestZipf = runGeneticConvergence(1, 33, FitnessConstants.ZIPF_FITNESS_ERROR_FIT, 0.7, 0.3, 1000, 300, mutation);
+		initPop = new ArrayList<Individual>();
+		initPop.addAll(bestFux);
+		initPop.addAll(bestZipf);
+		evalMultObjInidividuals(initPop, FitnessConstants.ZIPF_FITNESS_ERROR_FIT);
+		writeObjectivesMusic(bestFux, "fux", 33+"_p"+300+"_c"+0.7+"_m"+0.3);
+		writeObjectivesMusic(bestZipf, "zipf", 33+"_p"+300+"_c"+0.7+"_m"+0.3);
+		runNSGAIIParetoCombined(1, 33, initPop, FitnessConstants.MULTI_OBJECTIVE_FITNESS, 0.7, 0.3, 1000, 300, mutation);*/
 		
 		//runNSGAIIParetoCombined(0, 33, null, FitnessConstants.MULTI_OBJECTIVE_FITNESS, 0.9, 0.1, 1000, 300);
 		/*bestFux = runGeneticConvergence(0, 33, FitnessConstants.FUX_FITNESS, 0.9, 0.1, 1000, 300);
@@ -297,7 +328,7 @@ public final class Main implements JMC {
 		
 	}
 	
-	public static void runNSGA2 (int inScale, int nReplics, ArrayList<Individual> initialIndividuals) {
+	public static void runNSGA2 (int inScale, int nReplics, ArrayList<Individual> initialIndividuals, String mutation) {
 		for (int i = 0; i< nReplics; i++) {
 			if (inScale ==1) {
 				Constants.RANGE_MAX_PITCH = Constants.RANGE_MIN_PITCH + 3*7;
@@ -307,7 +338,6 @@ public final class Main implements JMC {
 			String selection = Constants.BINARY_TOURNAMENT_CROWDED_COMPARISON;
 			String crossOver = Constants.CROSS_OVER_BAR;
 			String fitness = FitnessConstants.MULTI_OBJECTIVE_FITNESS;
-			String mutation = MutationConstants.MUTATE_MELODIC_AND_RHYTHM_TRIGRAM_BAR;
 			String generationType = Constants.BAR_REMAINING_DURATION;
 			GeneticAlgorithm ga = new GeneticAlgorithm(300, 600, 0.90, 0.3, 30, selection, crossOver, fitness, mutation, generationType, initialIndividuals);
 			ga.nsga2();
@@ -334,12 +364,11 @@ public final class Main implements JMC {
 
 	}
 	
-	public static void runNSGAIIParetoCombined (int inScale, int nReplics, ArrayList<Individual> initialIndividuals, String fitness, double crossOverRate, double mutationRate, int generations, int popSize) {
+	public static void runNSGAIIParetoCombined (int inScale, int nReplics, ArrayList<Individual> initialIndividuals, String fitness, double crossOverRate, double mutationRate, int generations, int popSize, String mutation) {
 		ArrayList<Individual> paretoCombined = new ArrayList<Individual>();
 		String midname = "";
 		String selection = Constants.BINARY_TOURNAMENT_CROWDED_COMPARISON;
 		String crossOver = Constants.CROSS_OVER_BAR;
-		String mutation = MutationConstants.MUTATE_MELODIC_AND_RHYTHM_TRIGRAM_BAR;
 		String generationType = Constants.BAR_REMAINING_DURATION;
 		
 		for (int i = 0; i< nReplics; i++) {
@@ -382,7 +411,7 @@ public final class Main implements JMC {
 		
 	}
 	
-	public static ArrayList<Individual> runGeneticConvergence (int inScale, int nReplics, String fitness, double crossOverRate, double mutationRate, int generations, int popSize) {
+	public static ArrayList<Individual> runGeneticConvergence (int inScale, int nReplics, String fitness, double crossOverRate, double mutationRate, int generations, int popSize, String mutation) {
 		String meanS = "mean_";
 		if (inScale ==1) {
 			Constants.RANGE_MAX_PITCH = Constants.RANGE_MIN_PITCH + 3*7;
@@ -391,7 +420,7 @@ public final class Main implements JMC {
 		}
 		String selection = Constants.BINARY_TOURNAMENT;
 		String crossOver = Constants.CROSS_OVER_BAR;
-		String mutation = MutationConstants.MUTATE_MELODIC_AND_RHYTHM_TRIGRAM_BAR;
+		//String mutation = MutationConstants.MUTATE_MELODIC_AND_RHYTHM_TRIGRAM_BAR;
 		String generationType = Constants.BAR_REMAINING_DURATION;
 		ArrayList<GeneticAlgorithm> gAs = new ArrayList<GeneticAlgorithm>();
 		for (int i=0; i< nReplics; i++) {

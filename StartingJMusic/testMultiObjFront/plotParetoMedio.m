@@ -1,8 +1,11 @@
 close all
 clear all
 
-convMeanIP = load('0F_900InitPopParetoCombined_33_p300_c0.7_m0.3_M_2016_12_10_9_39_17.mid.dat')
-convMeanPC = load('0F_900ParetoCombined_33_p300_c0.7_m0.3_M_2016_12_9_3_36_4.mid.dat')
+%convMeanIP = load('0F_900InitPopParetoCombined_33_p300_c0.7_m0.3_M_2016_12_10_9_39_17.mid.dat')
+%convMeanPC = load('C+trigram0F_900InitPopC+C+C+C+C+C+C+ParetoCombined_33_p300_c0.7_m0.3_M_2017_2_20_13_27_0.mid.dat')
+convMeanIP = load('Copy0F_900InitPopParetoCombined_33_p300_c0.7_m0.3_M_2017_2_23_21_48_8.mid.dat')
+convMeanPC = load('C+Copy_0F_900InitPopC+C+CParetoCombined_33_p300_c0.7_m0.3_M_2017_2_21_22_18_57.mid.dat')
+
 bestZipf = load('2F_1_zipf33_p300_c0.9_m0.1.dat')
 bestFux = load('1F_1_fux33_p300_c0.9_m0.1.dat')
 plot(convMeanIP(:,1), convMeanIP(:,2), 'rx')
